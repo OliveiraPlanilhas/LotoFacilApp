@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="favicon.png">
+<title>Impressão de Volantes – Lotofácil</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:#0d1117;color:#e6edf3;min-height:100vh}
+  .app{max-width:1100px;margin:0 auto;padding:20px}
+  h1{text-align:center;color:#00e676;font-size:1.6rem;margin-bottom:4px}
+  .subtitle{text-align:center;color:#8b949e;font-size:.85rem;margin-bottom:24px}
+
+  /* PAINEL DE CONTROLE */
+  .painel{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:20px;margin-bottom:20px}
+  .painel h2{color:#58a6ff;font-size:1rem;margin-bottom:14px;border-bottom:1px solid #30363d;padding-bottom:8px}
+  .row{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:12px}
+  label{font-size:.8rem;color:#8b949e;display:block;margin-bottom:4px}
+  input[type=number],input[type=text],select{background:#0d1117;border:1px solid #30363d;color:#e6edf3;border-radius:6px;padding:7px 10px;font-size:.85rem;width:100%}
+  input[type=number]{width:90px}
+  .field{flex:1;min-width:80px}
+  .field-wide{flex:2;min-width:200px}
+  textarea{background:#0d1117;border:1px solid #30363d;color:#e6edf3;border-radius:6px;padding:10px;font-size:.85rem;width:100%;min-height:120px;resize:vertical;font-family:monospace}
+  .btn{background:#00e676;color:#0d1117;border:none;border-radius:6px;padding:9px 20px;font-weight:700;cursor:pointer;font-size:.85rem;transition:.2s}
+  .btn:hover{background:#00c853}
+  .btn-blue{background:#58a6ff;color:#0d1117}
+  .btn-blue:hover{background:#388bfd}
+  .btn-red{background:#f85149;color:#fff}
+  .btn-red:hover{background:#da3633}
+  .btn-gray{background:#30363d;color:#e6edf3}
+  .btn-gray:hover{background:#444c56}
+  .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+
+  /* LISTA DE JOGOS */
+  .jogos-lista{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+  .jogo-chip{background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:8px 12px;font-size:.8rem;cursor:pointer;transition:.2s;position:relative}
+  .jogo-chip:hover{border-color:#58a6ff}
+  .jogo-chip.selecionado{border-color:#00e676;background:#0a2a1a}
+  .jogo-chip .nums{color:#00e676;font-weight:700;font-size:.75rem;letter-spacing:.5px}
+  .jogo-chip .remover{position:absolute;top:2px;right:5px;color:#f85149;cursor:pointer;font-size:.8rem;line-height:1}
+
+  /* PRÉ-VISUALIZAÇÃO */
+  .preview-area{background:#1c2128;border:1px solid #30363d;border-radius:10px;padding:20px;margin-bottom:20px}
+  .preview-area h2{color:#58a6ff;font-size:1rem;margin-bottom:14px;border-bottom:1px solid #30363d;padding-bottom:8px}
+  .preview-scroll{display:flex;flex-wrap:wrap;gap:16px;justify-content:flex-start}
+
+  /* VOLANTE */
+  .volante{
+    width:83mm;
+    background:white;
+    border:1px solid #ccc;
+    border-radius:2mm;
+    padding:3mm 3mm 2mm 3mm;
+    font-family:Arial,Helvetica,sans-serif;
+    color:#000;
+    position:relative;
+    display:inline-block;
+    vertical-align:top;
+    box-shadow:0 2px 8px rgba(0,0,0,.3);
+  }
+  .volante-header{text-align:center;margin-bottom:2mm}
+  .volante-header .titulo{font-size:10pt;font-weight:900;color:#004080;letter-spacing:1px}
+  .volante-header .jogo-num{font-size:7pt;color:#555;margin-top:.5mm}
+  .grade{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:0.8mm;
+    margin:0 auto 2mm auto;
+    width:100%;
+  }
+  .celula{
+    aspect-ratio:1;
+    border:0.4mm solid #333;
+    border-radius:0.8mm;
+    display:flex;align-items:center;justify-content:center;
+    font-size:9pt;font-weight:700;
+    color:#000;
+    background:#f9f9f9;
+    position:relative;
+    user-select:none;
+  }
+  .celula.marcada{
+    background:#00308F;
+    color:#fff;
+    border-color:#00308F;
+  }
+  .celula.marcada-preto{
+    background:#111;
+    color:#fff;
+    border-color:#111;
+  }
+  .volante-footer{text-align:center;font-size:6pt;color:#777;margin-top:1.5mm;border-top:.3mm solid #ddd;padding-top:1mm}
+
+  /* MODO FOLHA A4 */
+  .folha-a4{
+    width:210mm;
+    min-height:297mm;
+    background:white;
+    margin:0 auto;
+    padding:10mm;
+    box-shadow:0 2px 16px rgba(0,0,0,.4);
+  }
+  .folha-a4 .grade-page{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:6mm;
+    justify-items:center;
+  }
+
+  /* STATUS */
+  .status{padding:8px 12px;border-radius:6px;font-size:.82rem;margin-top:10px}
+  .status.ok{background:#0a2a1a;border:1px solid #00e676;color:#00e676}
+  .status.err{background:#2a0a0a;border:1px solid #f85149;color:#f85149}
+  .status.info{background:#0a1a2a;border:1px solid #58a6ff;color:#58a6ff}
+
+  /* PRINT */
+  @media print{
+    body,html{background:white!important;color:black!important}
+    .no-print{display:none!important}
+    .volante{box-shadow:none!important;border:none!important}
+    .print-area{margin:0;padding:0}
+    @page{margin:0;size:auto}
+    .volante-unico{
+      position:fixed;
+      top:var(--margin-y);
+      left:var(--margin-x);
+      margin:0!important;
+    }
+    .folha-a4{box-shadow:none!important;padding:8mm!important;width:210mm!important}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>🎰 Impressão de Volantes – Lotofácil</h1>
+  <p class="subtitle">Sistema de impressão com gabarito preciso para volante físico da Caixa</p>
+
+  <!-- PAINEL JOGOS -->
+  <div class="painel no-print">
+    <h2>📋 Jogos para Impressão</h2>
+    <div class="row">
+      <div class="field-wide">
+        <label>Adicionar jogo manualmente (15 números separados por vírgula ou espaço):</label>
+        <input type="text" id="inp-jogo" placeholder="Ex: 01,02,05,07,09,11,13,14,17,18,20,21,23,24,25">
+      </div>
+      <div>
+        <label>&nbsp;</label>
+        <button class="btn" onclick="adicionarJogo()">+ Adicionar</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field-wide">
+        <label>Ou cole múltiplos jogos (um por linha):</label>
+        <textarea id="inp-lote" placeholder="01 02 05 07 09 11 13 14 17 18 20 21 23 24 25&#10;02 04 06 08 10 12 14 16 18 20 22 23 24 25 01"></textarea>
+      </div>
+    </div>
+    <div class="btns">
+      <button class="btn btn-blue" onclick="importarLote()">📥 Importar Lote</button>
+      <button class="btn btn-gray" onclick="importarDoLocalStorage()">🔗 Importar do LOTOSTAT PRO</button>
+      <button class="btn btn-red" onclick="limparTodos()">🗑 Limpar Todos</button>
+    </div>
+    <div id="status-importacao"></div>
+    <div class="jogos-lista" id="jogos-lista"></div>
+  </div>
+
+  <!-- PAINEL CONFIGURAÇÃO -->
+  <div class="painel no-print">
+    <h2>⚙️ Configuração de Impressão</h2>
+    <div class="row">
+      <div class="field">
+        <label>Modo de Impressão:</label>
+        <select id="modo-impressao" onchange="atualizarPreview()">
+          <option value="unico">Um volante por vez</option>
+          <option value="lote">Lote em folha A4</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Cor de marcação:</label>
+        <select id="cor-marcacao" onchange="atualizarPreview()">
+          <option value="marcada">Azul (padrão Caixa)</option>
+          <option value="marcada-preto">Preto</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Jogo atual (modo único):</label>
+        <select id="jogo-atual" onchange="atualizarPreview()"></select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Margem X (mm):</label>
+        <input type="number" id="margin-x" value="0" step="0.5" min="-20" max="20" oninput="atualizarPreview()">
+      </div>
+      <div class="field">
+        <label>Margem Y (mm):</label>
+        <input type="number" id="margin-y" value="0" step="0.5" min="-20" max="20" oninput="atualizarPreview()">
+      </div>
+      <div class="field">
+        <label>Tamanho célula (mm):</label>
+        <input type="number" id="cel-size" value="13.5" step="0.1" min="8" max="18" oninput="atualizarPreview()">
+      </div>
+      <div class="field">
+        <label>Gap células (mm):</label>
+        <input type="number" id="cel-gap" value="0.8" step="0.1" min="0" max="3" oninput="atualizarPreview()">
+      </div>
+    </div>
+    <div class="btns">
+      <button class="btn" onclick="imprimir()">🖨️ Imprimir</button>
+      <button class="btn btn-blue" onclick="atualizarPreview()">👁 Atualizar Preview</button>
+    </div>
+  </div>
+
+  <!-- PRÉ-VISUALIZAÇÃO -->
+  <div class="preview-area" id="print-area">
+    <h2 class="no-print">👁 Pré-visualização</h2>
+    <div id="preview-container" class="preview-scroll"></div>
+  </div>
+</div>
+
+<script>
+let jogos = [];
+
+/* ===== UTILITÁRIOS ===== */
+function parsearJogo(str) {
+  const nums = str.match(/\d+/g);
+  if (!nums) return null;
+  const parsed = [...new Set(nums.map(n => parseInt(n)).filter(n => n >= 1 && n <= 25))].sort((a,b)=>a-b);
+  if (parsed.length < 15 || parsed.length > 20) return null;
+  return parsed;
+}
+
+function pad(n){ return String(n).padStart(2,'0'); }
+
+function mostrarStatus(msg, tipo='info'){
+  const el = document.getElementById('status-importacao');
+  el.innerHTML = '<div class="status '+tipo+'">'+msg+'</div>';
+  setTimeout(()=>{ el.innerHTML=''; }, 4000);
+}
+
+/* ===== GESTÃO DE JOGOS ===== */
+function adicionarJogo(){
+  const v = document.getElementById('inp-jogo').value.trim();
+  if (!v) return;
+  const j = parsearJogo(v);
+  if (!j) { mostrarStatus('❌ Jogo inválido. Insira de 15 a 20 números entre 01 e 25.','err'); return; }
+  jogos.push(j);
+  document.getElementById('inp-jogo').value='';
+  mostrarStatus('✅ Jogo adicionado! Total: '+jogos.length,'ok');
+  renderLista(); atualizarPreview();
+}
+
+function importarLote(){
+  const txt = document.getElementById('inp-lote').value.trim();
+  const linhas = txt.split('\n').filter(l=>l.trim());
+  let ok=0,err=0;
+  linhas.forEach(l=>{ const j=parsearJogo(l); if(j){ jogos.push(j); ok++; } else err++; });
+  document.getElementById('inp-lote').value='';
+  mostrarStatus('✅ '+ok+' jogos importados'+(err?' | ❌ '+err+' inválidos':''),'ok');
+  renderLista(); atualizarPreview();
+}
+
+function importarDoLocalStorage(){
+  // Tenta ler jogos salvos pelo LOTOSTAT PRO em localStorage
+  const chaves = ['lotofacil_jogos','jogos_gerados','sugestoes','apostas','lotostat_jogos'];
+  let encontrou = false;
+  chaves.forEach(ch=>{
+    try {
+      const raw = localStorage.getItem(ch);
+      if (raw) {
+        const data = JSON.parse(raw);
+        let arr = Array.isArray(data) ? data : (data.jogos||data.apostas||data.sugestoes||[]);
+        arr.forEach(item=>{
+          const nums = Array.isArray(item) ? item : (item.numeros||item.dezenas||item.numbers||[]);
+          const j = parsearJogo(nums.join(','));
+          if(j){ jogos.push(j); encontrou=true; }
+        });
+      }
+    } catch(e){}
+  });
+  if(encontrou){ mostrarStatus('✅ Jogos importados do LOTOSTAT PRO! Total: '+jogos.length,'ok'); renderLista(); atualizarPreview(); }
+  else mostrarStatus('⚠️ Nenhum jogo encontrado no LOTOSTAT PRO. Gere jogos na aba Sugestão primeiro.','err');
+}
+
+function removerJogo(i){
+  jogos.splice(i,1);
+  renderLista(); atualizarPreview();
+}
+
+function limparTodos(){
+  if(!confirm('Remover todos os jogos?')) return;
+  jogos=[];
+  renderLista(); atualizarPreview();
+}
+
+function renderLista(){
+  const sel = document.getElementById('jogo-atual');
+  const prev = sel.value;
+  sel.innerHTML = jogos.map((j,i)=>'<option value="'+i+'">Jogo '+(i+1)+' ('+j.length+' dezenas)</option>').join('');
+  if(prev && parseInt(prev)<jogos.length) sel.value=prev;
+
+  const lista = document.getElementById('jogos-lista');
+  lista.innerHTML = jogos.map((j,i)=>
+    '<div class="jogo-chip selecionado" onclick="selecionarJogo('+i+')">'
+    +'<span class="remover" onclick="event.stopPropagation();removerJogo('+i+')" title="Remover">✕</span>'
+    +'<div style="font-size:.7rem;color:#8b949e;margin-bottom:2px">Jogo '+(i+1)+'</div>'
+    +'<div class="nums">'+j.map(n=>pad(n)).join(' ')+'</div>'
+    +'</div>'
+  ).join('');
+}
+
+function selecionarJogo(i){
+  document.getElementById('jogo-atual').value=i;
+  atualizarPreview();
+}
+
+/* ===== RENDER VOLANTE ===== */
+function renderVolante(nums, jogoNum, celSize, celGap, corClass){
+  const marcados = new Set(nums);
+  let cells='';
+  for(let n=1;n<=25;n++){
+    const m = marcados.has(n);
+    cells += '<div class="celula'+(m?' '+corClass:'')+'">'+(m?'<span>'+pad(n)+'</span>':pad(n))+'</div>';
+  }
+  return '<div class="volante" style="--cel:'+celSize+'mm;--gap:'+celGap+'mm">'
+    +'<div class="volante-header">'
+    +'<div class="titulo">LOTOFÁCIL</div>'
+    +'<div class="jogo-num">Jogo '+jogoNum+' &nbsp;|&nbsp; '+nums.length+' dezenas</div>'
+    +'</div>'
+    +'<div class="grade" style="gap:'+celGap+'mm;grid-template-columns:repeat(5,'+celSize+'mm)">'
+    +cells
+    +'</div>'
+    +'<div class="volante-footer">Imprima sobre o volante físico da Caixa</div>'
+    +'</div>';
+}
+
+/* ===== PRÉ-VISUALIZAÇÃO ===== */
+function atualizarPreview(){
+  const container = document.getElementById('preview-container');
+  if(jogos.length===0){ container.innerHTML='<div style="color:#8b949e;font-size:.85rem;padding:20px">Nenhum jogo adicionado ainda.</div>'; return; }
+  const modo = document.getElementById('modo-impressao').value;
+  const cor = document.getElementById('cor-marcacao').value;
+  const celSize = parseFloat(document.getElementById('cel-size').value)||13.5;
+  const celGap = parseFloat(document.getElementById('cel-gap').value)||0.8;
+  const jogoIdx = parseInt(document.getElementById('jogo-atual').value)||0;
+  const mx = parseFloat(document.getElementById('margin-x').value)||0;
+  const my = parseFloat(document.getElementById('margin-y').value)||0;
+
+  if(modo==='unico'){
+    const j = jogos[jogoIdx] || jogos[0];
+    if(!j){ container.innerHTML='<div style="color:#f85149">Selecione um jogo.</div>'; return; }
+    container.innerHTML = '<div style="margin:'+my+'mm 0 0 '+mx+'mm">'+renderVolante(j, jogoIdx+1, celSize, celGap, cor)+'</div>';
+  } else {
+    // Modo A4 – todos os jogos
+    let html = '<div class="folha-a4"><div class="grade-page">';
+    jogos.forEach((j,i)=>{ html += renderVolante(j, i+1, celSize, celGap, cor); });
+    html += '</div></div>';
+    container.innerHTML = html;
+  }
+}
+
+/* ===== IMPRESSÃO ===== */
+function imprimir(){
+  if(jogos.length===0){ alert('Adicione pelo menos um jogo antes de imprimir.'); return; }
+  const mx = parseFloat(document.getElementById('margin-x').value)||0;
+  const my = parseFloat(document.getElementById('margin-y').value)||0;
+  document.documentElement.style.setProperty('--margin-x', mx+'mm');
+  document.documentElement.style.setProperty('--margin-y', my+'mm');
+  window.print();
+}
+
+/* ===== INICIALIZAÇÃO ===== */
+// Carregar jogos passados via URL params
+(function(){
+  try{
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get('jogos');
+    if(raw){
+      JSON.parse(decodeURIComponent(raw)).forEach(j=>{
+        const parsed = parsearJogo(j.join ? j.join(',') : j);
+        if(parsed) jogos.push(parsed);
+      });
+      if(jogos.length) mostrarStatus('✅ '+jogos.length+' jogos carregados via URL.','ok');
+    }
+  }catch(e){}
+  renderLista();
+  atualizarPreview();
+})();
+</script>
+</body>
+</html>
