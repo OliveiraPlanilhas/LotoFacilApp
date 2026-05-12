@@ -3780,7 +3780,7 @@ window.pifPrint=function(){
     pages+='<div style="position:relative;width:210mm;height:297mm;overflow:hidden;page-break-after:always;">'+bilhetes+'</div>';
   }
   var win=window.open('','_blank');if(!win){alert('Popup bloqueado! Por favor, permita popups para este site.');return;}
-  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Impressão Lotofácil</title><style>*{margin:0;padding:0;box-sizing:border-box;}@page{size:A4 portrait;margin:0;}body{background:white;}@media screen{body{background:#ccc;padding:20px;}.print-page{margin:20px auto;background:white;box-shadow:0 4px 20px rgba(0,0,0,0.3);}}</style></head><body>'+pages+'<script>window.addEventListener("load",function(){setTimeout(function(){window.print();},400);});</script></body></html>');
+  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Impressão Lotofácil</title><style>*{margin:0;padding:0;box-sizing:border-box;}@page{size:A4 portrait;margin:0;}body{background:white;}@media screen{body{background:#ccc;padding:20px;}.print-page{margin:20px auto;background:white;box-shadow:0 4px 20px rgba(0,0,0,0.3);}}<\/style><\/head><body>'+pages+'<script>window.addEventListener("load",function(){setTimeout(function(){window.print();},400);});<\/script><\/body><\/html>');
   win.document.close();
 };
 })();
