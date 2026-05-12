@@ -578,7 +578,7 @@ input[type=range]::-webkit-slider-thumb {
   </div>
   <nav>
     <button class="active" onclick="showPage('dashboard')">Dashboard</button>
-    <button onclick="showPage('sugestao')" style="color:var(--gold);font-weight:700">★ Sugestão</button>
+    <button onclick="showPage('sugestao')" style="color:rgba(255,255,255,0.90);font-weight:700">★ Sugestão</button>
     <button onclick="showPage('estatisticas')">Estatísticas</button>
     <button onclick="showPage('gerador')">Gerador IA</button>
     <button onclick="showPage('cercamento')">Cercamento</button>
@@ -3591,14 +3591,14 @@ function imprimirTodosVolantes() {
   const fonte = document.getElementById('vol-fonte')?.value || 'sugestao';
   const jogos = coletarJogosFonte(fonte);
   if (!jogos.length) return;
-  _imprimirVolantes(jogos);
+  abrirModalImpressaoFisica(jogos);
 }
 
 /* ── Imprimir um ── */
 function imprimirUmVolante(idx) {
   const jogos = window._volanteJogos || [];
   if (!jogos[idx]) return;
-  _imprimirVolantes([jogos[idx]]);
+  abrirModalImpressaoFisica([jogos[idx]]);
 }
 
 /* ── Motor de impressão ── */
@@ -3630,7 +3630,7 @@ function imprimirDireto(titulo) { imprimirTodosVolantes(); }
 function closePrintModal()      {}
 function atualizarPreview()     {}
 function executarImpressao()    { imprimirTodosVolantes(); }
-function buildPrintSheet()      { return ''; }
+function buildPrintSheet() { return ''; /* canvas modal handles printing */ }
 
 
 
@@ -3649,5 +3649,140 @@ document.addEventListener('DOMContentLoaded', () => {
   // Attempt live update
   setTimeout(fetchLatest, 1500);
 });
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SISTEMA DE IMPRESSÃO FÍSICA - LOTOFÁCIL v2.0
+     Retângulos precisos sobre bilhete real - com calibração
+     ═══════════════════════════════════════════════════════════ -->
+<div id="modalImpFisica" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;font-family:Arial,sans-serif;">
+  <div style="background:#1a1a2e;border:1px solid #444;border-radius:12px;width:96vw;max-width:1300px;height:94vh;margin:3vh auto;display:flex;flex-direction:column;overflow:hidden;color:#fff;">
+    <div style="background:linear-gradient(135deg,#6a0dad,#4a0080);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-radius:12px 12px 0 0;flex-shrink:0;">
+      <div>
+        <span style="font-size:18px;font-weight:bold;">&#x1F5A8; Impress&#xE3;o no Bilhete F&#xED;sico</span>
+        <span style="font-size:12px;color:#ddd;margin-left:12px;">Ret&#xE2;ngulos precisos sobre o volante oficial da Lotof&#xE1;cil</span>
+      </div>
+      <button onclick="document.getElementById('modalImpFisica').style.display='none'" style="background:rgba(255,255,255,0.15);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px;">&#x2715;</button>
+    </div>
+    <div style="display:flex;flex:1;overflow:hidden;">
+      <div style="width:280px;flex-shrink:0;background:#0d0d1a;border-right:1px solid #333;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;">
+        <div>
+          <label style="font-size:12px;color:#aaa;display:block;margin-bottom:6px;">BILHETES POR P&#xC1;GINA A4</label>
+          <div style="display:flex;gap:6px;">
+            <button class="pif-btn-lay" data-n="1" onclick="pifSetLayout(1)" style="flex:1;padding:8px 4px;border-radius:6px;border:2px solid #7c3aed;background:#7c3aed;color:#fff;cursor:pointer;font-weight:bold;">1</button>
+            <button class="pif-btn-lay" data-n="2" onclick="pifSetLayout(2)" style="flex:1;padding:8px 4px;border-radius:6px;border:2px solid #444;background:transparent;color:#aaa;cursor:pointer;">2</button>
+            <button class="pif-btn-lay" data-n="3" onclick="pifSetLayout(3)" style="flex:1;padding:8px 4px;border-radius:6px;border:2px solid #444;background:transparent;color:#aaa;cursor:pointer;">3</button>
+          </div>
+        </div>
+        <div id="pif-info" style="background:#111;border-radius:6px;padding:10px;font-size:11px;color:#9ca3af;line-height:1.6;"></div>
+        <div>
+          <label style="font-size:12px;color:#aaa;display:block;margin-bottom:6px;">&#x2699; CALIBRA&#xC7;&#xC3;O</label>
+          <div style="font-size:11px;color:#777;margin-bottom:8px;">Ajuste para alinhar com sua impressora</div>
+          <div style="display:grid;gap:8px;">
+            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;color:#ccc;width:80px;">Offset X (mm)</span><input type="range" id="pif-ox" min="-10" max="10" step="0.5" value="0" oninput="document.getElementById('pif-vx').textContent=this.value;pifRender()" style="flex:1;accent-color:#7c3aed;"><span id="pif-vx" style="font-size:11px;color:#7c3aed;width:28px;text-align:right;">0</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;color:#ccc;width:80px;">Offset Y (mm)</span><input type="range" id="pif-oy" min="-10" max="10" step="0.5" value="0" oninput="document.getElementById('pif-vy').textContent=this.value;pifRender()" style="flex:1;accent-color:#7c3aed;"><span id="pif-vy" style="font-size:11px;color:#7c3aed;width:28px;text-align:right;">0</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;color:#ccc;width:80px;">Escala (%)</span><input type="range" id="pif-sc" min="90" max="110" step="0.5" value="100" oninput="document.getElementById('pif-vs').textContent=this.value;pifRender()" style="flex:1;accent-color:#7c3aed;"><span id="pif-vs" style="font-size:11px;color:#7c3aed;width:32px;text-align:right;">100</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;color:#ccc;width:80px;">Tam. Rect (%)</span><input type="range" id="pif-rs" min="30" max="90" step="1" value="70" oninput="document.getElementById('pif-vr').textContent=this.value;pifRender()" style="flex:1;accent-color:#7c3aed;"><span id="pif-vr" style="font-size:11px;color:#7c3aed;width:32px;text-align:right;">70</span></div>
+          </div>
+          <div style="display:flex;gap:6px;margin-top:8px;">
+            <button onclick="pifResetCal()" style="flex:1;padding:6px;border-radius:6px;border:1px solid #555;background:transparent;color:#aaa;cursor:pointer;font-size:11px;">&#x21BA; Reset</button>
+            <button onclick="pifSaveCal(event)" style="flex:1;padding:6px;border-radius:6px;border:1px solid #7c3aed;background:transparent;color:#7c3aed;cursor:pointer;font-size:11px;">&#x1F4BE; Salvar</button>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:12px;color:#aaa;display:block;margin-bottom:6px;">JOGO ATUAL</label>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button onclick="pifPrevJogo()" style="padding:4px 10px;border-radius:6px;border:1px solid #555;background:transparent;color:#ccc;cursor:pointer;">&#x25C4;</button>
+            <span id="pif-jogo-lbl" style="flex:1;text-align:center;font-size:12px;color:#7c3aed;font-weight:bold;"></span>
+            <button onclick="pifNextJogo()" style="padding:4px 10px;border-radius:6px;border:1px solid #555;background:transparent;color:#ccc;cursor:pointer;">&#x25BA;</button>
+          </div>
+          <div id="pif-jogo-dez" style="font-size:11px;color:#9ca3af;text-align:center;margin-top:4px;"></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;"><input type="checkbox" id="pif-guide" onchange="pifRender()" style="accent-color:#7c3aed;"><label for="pif-guide" style="font-size:12px;color:#ccc;cursor:pointer;">Mostrar linhas guia</label></div>
+        <div style="display:flex;align-items:center;gap:8px;"><input type="checkbox" id="pif-bg" checked onchange="pifRender()" style="accent-color:#7c3aed;"><label for="pif-bg" style="font-size:12px;color:#ccc;cursor:pointer;">Fundo simulado</label></div>
+        <button onclick="pifPrint()" style="padding:12px;border-radius:8px;border:none;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;font-weight:bold;font-size:14px;cursor:pointer;margin-top:auto;">&#x1F5A8; IMPRIMIR</button>
+        <button onclick="alert('Use Imprimir → Salvar como PDF')" style="padding:10px;border-radius:8px;border:1px solid #7c3aed;background:transparent;color:#7c3aed;font-size:13px;cursor:pointer;">&#x1F4C4; Exportar PDF</button>
+      </div>
+      <div style="flex:1;background:#2a2a3e;overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:16px;">
+        <div style="position:relative;"><canvas id="pif-canvas" style="box-shadow:0 4px 24px rgba(0,0,0,0.5);border-radius:2px;"></canvas></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+var PIF={bilhete:{w:74.5,h:178.0,quadros:[{topY:27.5},{topY:83.0},{topY:138.5}],grid:{cols:5,rows:5,xStart:7.8,xStep:11.8,yStart:7.5,yStep:9.8,cellW:9.0,cellH:7.5}},layout:{n:1,pageW:210,pageH:297,gap:10},cal:{ox:0,oy:0,scale:100,rs:70},state:{idx:0,jogos:[]}};
+window._PIF=PIF;
+try{var c=JSON.parse(localStorage.getItem('loto_pif_cal')||'{}');if(c.ox!=null)PIF.cal.ox=c.ox;if(c.oy!=null)PIF.cal.oy=c.oy;if(c.scale!=null)PIF.cal.scale=c.scale;if(c.rs!=null)PIF.cal.rs=c.rs;}catch(e){}
+window.abrirModalImpressaoFisica=function(jogos){
+  var modal=document.getElementById('modalImpFisica');if(!modal)return;
+  PIF.state.jogos=jogos||[];PIF.state.idx=0;modal.style.display='flex';
+  var ox=document.getElementById('pif-ox'),oy=document.getElementById('pif-oy'),sc=document.getElementById('pif-sc'),rs=document.getElementById('pif-rs');
+  if(ox){ox.value=PIF.cal.ox;document.getElementById('pif-vx').textContent=PIF.cal.ox;}
+  if(oy){oy.value=PIF.cal.oy;document.getElementById('pif-vy').textContent=PIF.cal.oy;}
+  if(sc){sc.value=PIF.cal.scale;document.getElementById('pif-vs').textContent=PIF.cal.scale;}
+  if(rs){rs.value=PIF.cal.rs;document.getElementById('pif-vr').textContent=PIF.cal.rs;}
+  pifSetLayout(PIF.layout.n);
+};
+window.pifSetLayout=function(n){
+  PIF.layout.n=n;
+  document.querySelectorAll('.pif-btn-lay').forEach(function(btn){var a=parseInt(btn.dataset.n)===n;btn.style.border=a?'2px solid #7c3aed':'2px solid #444';btn.style.background=a?'#7c3aed':'transparent';btn.style.color=a?'#fff':'#aaa';btn.style.fontWeight=a?'bold':'normal';});
+  pifRender();
+};
+function pifGetCal(){return{ox:parseFloat(document.getElementById('pif-ox')?.value||0),oy:parseFloat(document.getElementById('pif-oy')?.value||0),scale:parseFloat(document.getElementById('pif-sc')?.value||100),rs:parseFloat(document.getElementById('pif-rs')?.value||70)};}
+window.pifRender=function(){
+  var canvas=document.getElementById('pif-canvas');if(!canvas)return;
+  var cal=pifGetCal(),n=PIF.layout.n,showGuide=document.getElementById('pif-guide')?.checked,showBg=document.getElementById('pif-bg')?.checked;
+  var DPI=96,PS=2.2,m2p=function(mm){return(mm/25.4)*DPI*PS;};
+  var B=PIF.bilhete,scl=cal.scale/100,pageW=m2p(210),pageH=m2p(297);
+  canvas.width=pageW;canvas.height=pageH;canvas.style.width=pageW+'px';canvas.style.height=pageH+'px';
+  var ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,pageW,pageH);
+  var jogos=PIF.state.jogos,bilH=B.h*scl,totalH=n*bilH+(n-1)*PIF.layout.gap;
+  var startY=(297-totalH)/2+cal.oy,startX=(210-B.w*scl)/2+cal.ox;
+  for(var b=0;b<n;b++){
+    var ji=(PIF.state.idx+b)%Math.max(jogos.length,1),jogo=jogos[ji],dez=jogo?jogo.dezenas:[];
+    var bX=m2p(startX),bY=m2p(startY+b*(bilH+PIF.layout.gap)),bW=m2p(B.w*scl),bH=m2p(B.h*scl);
+    if(showBg){
+      ctx.fillStyle='#7b1fa2';ctx.fillRect(bX,bY,bW,m2p(22));
+      ctx.fillStyle='#fff';ctx.font='bold '+m2p(6)+'px Arial';ctx.textAlign='center';ctx.fillText('lotofácil',bX+bW/2,bY+m2p(14));
+      ctx.fillStyle='#fffde7';ctx.fillRect(bX,bY+m2p(22),bW,bH-m2p(22));
+      ctx.strokeStyle='#ccc';ctx.lineWidth=1;ctx.strokeRect(bX,bY,bW,bH);
+      ctx.fillStyle='#9c27b0';ctx.textAlign='center';ctx.textBaseline='middle';
+      for(var qi=0;qi<B.quadros.length;qi++){var q=B.quadros[qi];for(var row=0;row<B.grid.rows;row++){for(var col=0;col<B.grid.cols;col++){var num=row*B.grid.cols+col+1;var cx2=bX+m2p((B.grid.xStart+col*B.grid.xStep)*scl),cy2=bY+m2p((q.topY+B.grid.yStart+row*B.grid.yStep)*scl);ctx.font=m2p(2.5*scl)+'px Arial';ctx.fillText(String(num).padStart(2,'0'),cx2,cy2);}}}
+    }
+    if(showGuide){ctx.strokeStyle='rgba(0,150,255,0.4)';ctx.lineWidth=0.5;ctx.setLineDash([2,2]);for(var qi2=0;qi2<B.quadros.length;qi2++){var q2=B.quadros[qi2];ctx.strokeRect(bX,bY+m2p(q2.topY*scl),bW,m2p(B.grid.rows*B.grid.yStep*scl));}ctx.setLineDash([]);}
+    var rW=m2p(B.grid.cellW*scl*cal.rs/100),rH=m2p(B.grid.cellH*scl*cal.rs/100);ctx.fillStyle='#000';
+    for(var di=0;di<dez.length;di++){var d=dez[di];if(d<1||d>25)continue;var idx2=d-1,row2=Math.floor(idx2/B.grid.cols),col2=idx2%B.grid.cols;for(var qi3=0;qi3<B.quadros.length;qi3++){var q3=B.quadros[qi3];var cx3=bX+m2p((B.grid.xStart+col2*B.grid.xStep)*scl),cy3=bY+m2p((q3.topY+B.grid.yStart+row2*B.grid.yStep)*scl);ctx.fillRect(cx3-rW/2,cy3-rH/2,rW,rH);}}
+    if(jogo){ctx.fillStyle='#555';ctx.textAlign='left';ctx.textBaseline='top';ctx.font=m2p(2.2)+'px Arial';ctx.fillText(jogo.label||'Jogo '+(ji+1),bX+m2p(2),bY+bH+m2p(1));}
+  }
+  pifUpdateInfo();pifUpdateJogoLabel();
+};
+window.pifUpdateInfo=function(){var el=document.getElementById('pif-info');if(!el)return;var n=PIF.layout.n,tot=PIF.state.jogos.length,folhas=Math.ceil(tot/n);el.innerHTML='<b style="color:#a78bfa">'+tot+' jogo(s)</b> disponíveis<br><b style="color:#a78bfa">'+n+' bilhete(s)</b> por folha A4<br><b style="color:#a78bfa">'+folhas+' folha(s)</b> necessárias<br><b style="color:#a78bfa">A4 Portrait</b> · 210×297mm<br><span style="color:#6b7280">Bilhete: 74.5×178mm</span>';};
+window.pifUpdateJogoLabel=function(){var jogo=PIF.state.jogos[PIF.state.idx];var lbl=document.getElementById('pif-jogo-lbl'),dez=document.getElementById('pif-jogo-dez');if(lbl)lbl.textContent=jogo?(jogo.label||'Jogo '+(PIF.state.idx+1)):'Sem jogos';if(dez&&jogo)dez.textContent=jogo.dezenas.map(function(d){return String(d).padStart(2,'0');}).join(' ');};
+window.pifPrevJogo=function(){var n=PIF.state.jogos.length;if(!n)return;PIF.state.idx=(PIF.state.idx-1+n)%n;pifRender();};
+window.pifNextJogo=function(){var n=PIF.state.jogos.length;if(!n)return;PIF.state.idx=(PIF.state.idx+1)%n;pifRender();};
+window.pifResetCal=function(){['pif-ox','pif-oy','pif-sc','pif-rs'].forEach(function(id,i){var el=document.getElementById(id);if(el)el.value=[0,0,100,70][i];});['pif-vx','pif-vy','pif-vs','pif-vr'].forEach(function(id,i){var el=document.getElementById(id);if(el)el.textContent=[0,0,100,70][i];});pifRender();};
+window.pifSaveCal=function(ev){var cal=pifGetCal();PIF.cal=cal;try{localStorage.setItem('loto_pif_cal',JSON.stringify({ox:cal.ox,oy:cal.oy,scale:cal.scale,rs:cal.rs}));}catch(e){}var btn=ev.target;var orig=btn.textContent;btn.textContent='✓ Salvo!';btn.style.background='#065f46';setTimeout(function(){btn.textContent=orig;btn.style.background='transparent';},1500);};
+window.pifPrint=function(){
+  var jogos=PIF.state.jogos;if(!jogos.length){alert('Nenhum jogo disponível.');return;}
+  var cal=pifGetCal(),n=PIF.layout.n,B=PIF.bilhete,scl=cal.scale/100,totalFolhas=Math.ceil(jogos.length/n);
+  var pages='';
+  for(var f=0;f<totalFolhas;f++){
+    var bilhetes='';
+    for(var b=0;b<n;b++){
+      var ji=f*n+b;if(ji>=jogos.length)continue;
+      var jogo=jogos[ji],dez=jogo.dezenas,bilH=B.h*scl,totalH=n*bilH+(n-1)*10;
+      var startY=(297-totalH)/2+cal.oy,startX=(210-B.w*scl)/2+cal.ox;
+      var bilX=startX,bilY=startY+b*(bilH+10),marks='';
+      for(var di=0;di<dez.length;di++){var d=dez[di];if(d<1||d>25)continue;var idx2=d-1,row=Math.floor(idx2/5),col=idx2%5;var cellW=B.grid.cellW*scl,cellH=B.grid.cellH*scl,rW=cellW*cal.rs/100,rH=cellH*cal.rs/100;for(var qi=0;qi<B.quadros.length;qi++){var q=B.quadros[qi];var cx=(B.grid.xStart+col*B.grid.xStep)*scl,cy=(q.topY+B.grid.yStart+row*B.grid.yStep)*scl;marks+='<div style="position:absolute;left:'+(cx-rW/2).toFixed(3)+'mm;top:'+(cy-rH/2).toFixed(3)+'mm;width:'+rW.toFixed(3)+'mm;height:'+rH.toFixed(3)+'mm;background:#000;"></div>';}}
+      bilhetes+='<div style="position:absolute;left:'+bilX.toFixed(2)+'mm;top:'+bilY.toFixed(2)+'mm;width:'+(B.w*scl).toFixed(2)+'mm;height:'+bilH.toFixed(2)+'mm;">'+marks+'</div>';
+    }
+    pages+='<div style="position:relative;width:210mm;height:297mm;overflow:hidden;page-break-after:always;">'+bilhetes+'</div>';
+  }
+  var win=window.open('','_blank');if(!win){alert('Popup bloqueado! Por favor, permita popups para este site.');return;}
+  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Impressão Lotofácil</title><style>*{margin:0;padding:0;box-sizing:border-box;}@page{size:A4 portrait;margin:0;}body{background:white;}@media screen{body{background:#ccc;padding:20px;}.print-page{margin:20px auto;background:white;box-shadow:0 4px 20px rgba(0,0,0,0.3);}}</style></head><body>'+pages+'<script>window.addEventListener("load",function(){setTimeout(function(){window.print();},400);});</script></body></html>');
+  win.document.close();
+};
+})();
 </script>
 </body></html>
