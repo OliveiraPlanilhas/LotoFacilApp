@@ -426,132 +426,68 @@ input[type=range]::-webkit-slider-thumb {
 .volante-actions-preview { display:flex; gap:6px; }
 
 /* Volante estrutura */
+/* ======= VOLANTE — dimensões do bilhete físico Lotofácil ======= */
 .volante {
-  width: 320px;
+  width: 240px;
   font-family: Arial, Helvetica, sans-serif;
-  background: #fff; border: 1px solid #bbb; border-radius: 4px;
-  overflow: hidden; box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+  background: #fff;
+  border: 1px solid #aaa; border-radius: 2px;
+  overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.22);
   page-break-after: always; break-after: page;
   user-select: none;
 }
-
-/* Header */
 .vol-header {
-  background: linear-gradient(150deg,#6b1d6d 0%,#9a2b99 35%,#c03a8e 65%,#9a2070 100%);
-  padding: 10px 12px 8px; position: relative; overflow: hidden; min-height: 62px;
+  background: linear-gradient(160deg,#5e1060 0%,#8c2090 35%,#b83090 65%,#8c1870 100%);
+  padding: 6px 8px 5px; position: relative; overflow: hidden; min-height: 44px;
 }
-.vol-confetes-bg {
-  position:absolute; inset:0; pointer-events:none; overflow:hidden;
-}
-.vol-confete {
-  position:absolute; border-radius:1px; opacity:0.75;
-  animation: cfloat 4s ease-in-out infinite;
-}
-@keyframes cfloat { 0%,100%{transform:translateY(0) rotate(var(--r,0deg))} 50%{transform:translateY(-4px) rotate(calc(var(--r,0deg) + 10deg))} }
-.vol-header-inner { position:relative; z-index:1; display:flex; align-items:center; gap:8px; }
-.vol-trevo-svg { width:30px; height:30px; flex-shrink:0; }
-.vol-titulo {
-  font-size:30px; font-weight:900; color:#fff; font-style:italic;
-  letter-spacing:-1px; text-shadow:0 2px 8px rgba(0,0,0,0.35); line-height:1;
-}
-
-/* Instrução */
-.vol-instrucao {
-  background:#f5f5f5; border-bottom:1px solid #ddd;
-  padding:3px 8px; font-size:6.5px; font-weight:700;
-  color:#555; text-align:center; text-transform:uppercase; letter-spacing:0.3px;
-}
-
-/* Quadros */
-.vol-quadros { background:#fff; padding:4px 8px 6px; }
-.vol-quadro { margin-top:5px; }
-.vol-quadro-header {
-  display:flex; align-items:center; gap:4px; margin-bottom:3px;
-}
-.vol-q-badge {
-  width:15px; height:15px; border-radius:50%; background:#9a2b99; color:#fff;
-  font-size:7.5px; font-weight:700; display:flex; align-items:center; justify-content:center;
-  flex-shrink:0;
-}
-.vol-q-label { font-size:6.5px; color:#777; font-weight:600; text-transform:uppercase; letter-spacing:0.4px; }
-
-/* Grid 5×5 */
-.vol-grid {
-  display:grid; grid-template-columns:repeat(5,1fr); gap:2px;
-  border:1.5px solid #a050a0; border-radius:3px; padding:3px;
-  background:#faeafa;
-}
-.vol-num {
-  aspect-ratio:1; display:flex; align-items:center; justify-content:center;
-  font-size:10.5px; font-weight:700; color:#666;
-  border:1px solid #d090d0; border-radius:2px; background:#fff;
-  min-height:20px; transition: background .15s;
-}
-.vol-num.marcado          { background:#6b1d6d; border-color:#6b1d6d; color:#fff; }
-.vol-num.marcado.quente   { background:#c03a8e; border-color:#9a2b99; color:#fff; }
-.vol-num.marcado.atrasado { background:#1f6b1f; border-color:#155015; color:#fff; }
-
-/* Qtd dezenas */
-.vol-qtd { padding:4px 8px 3px; border-top:1px solid #e8d8e8; }
-.vol-qtd-lbl { font-size:6.5px; font-weight:700; color:#333; margin-bottom:3px; }
-.vol-qtd-row { display:flex; gap:3px; }
-.vol-qtd-box {
-  width:24px; height:15px; border:1px solid #aaa; border-radius:2px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:8px; font-weight:700; color:#555;
-}
-.vol-qtd-box.sel { background:#6b1d6d; border-color:#6b1d6d; color:#fff; }
-
-/* Surpresinha / Teimosinha */
-.vol-extras { padding:3px 8px 3px; border-top:1px solid #e8d8e8; }
-.vol-extra-row { display:flex; align-items:center; gap:4px; margin-bottom:2px; }
-.vol-extra-name { font-size:6px; font-weight:700; color:#333; min-width:68px; }
-.vol-extra-boxes { display:flex; gap:2px; }
-.vol-extra-box {
-  width:15px; height:11px; border:1px solid #aaa; border-radius:1px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:7px; font-weight:700; color:#555;
-}
-.vol-extra-desc { font-size:5.5px; color:#888; line-height:1.3; }
-
-/* Stats */
-.vol-stats {
-  background:#f0e0f0; border-top:1px solid #d090d0;
-  padding:3px 8px; display:flex; gap:10px; justify-content:center;
-}
-.vol-stat-item { font-size:7px; font-family:'Courier New',monospace; font-weight:700; color:#6b1d6d; }
-.vol-stat-sep  { font-size:7px; color:#c0a0c0; }
-
-/* Promo */
-.vol-promo {
-  background:#fffbee; border-top:2px solid #a050a0; padding:5px 8px; text-align:center;
-}
-.vol-promo-text { font-size:9px; font-weight:700; color:#333; line-height:1.5; }
-.vol-promo-text .pink { color:#c03a8e; font-size:10.5px; }
-.vol-promo-warn {
-  margin-top:2px; font-size:6px; font-weight:700; color:#fff;
-  background:#c03a8e; padding:2px 6px; border-radius:2px; display:inline-block;
-}
-
-/* Footer */
-.vol-footer {
-  background:#fff; border-top:1px solid #ddd; padding:4px 8px;
-  display:flex; align-items:center; justify-content:space-between;
-}
-.vol-footer-brand { display:flex; align-items:center; gap:5px; }
-.vol-footer-trevor { font-size:14px; }
-.vol-footer-loterias { font-size:7px; color:#888; font-weight:600; }
-.vol-footer-caixa { font-size:10px; font-weight:900; color:#005c9e; letter-spacing:-0.3px; }
+.vol-confetes-bg { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+.vol-confete { position:absolute; border-radius:1px; opacity:0.8; animation: cfloat 4s ease-in-out infinite; }
+@keyframes cfloat { 0%,100%{transform:translateY(0) rotate(var(--r,0deg))} 50%{transform:translateY(-3px) rotate(calc(var(--r,0deg)+8deg))} }
+.vol-header-inner { position:relative; z-index:1; display:flex; align-items:center; gap:5px; }
+.vol-trevo-svg { width:22px; height:22px; flex-shrink:0; }
+.vol-titulo { font-size:22px; font-weight:900; color:#fff; font-style:italic; letter-spacing:-1px; text-shadow:0 2px 6px rgba(0,0,0,0.4); line-height:1; }
+.vol-instrucao { background:#f8f8f8; border-bottom:1px solid #ddd; padding:2px 5px; font-size:5px; font-weight:700; color:#444; text-align:left; text-transform:uppercase; letter-spacing:0.2px; }
+.vol-quadros { background:#fff; padding:2px 4px 3px; }
+.vol-quadro { margin-top:3px; padding-bottom:3px; border-bottom:1px dashed #bbb; }
+.vol-quadro:last-child { border-bottom:none; }
+.vol-quadro-header { display:flex; align-items:center; gap:3px; margin-bottom:2px; }
+.vol-q-badge { width:10px; height:10px; border-radius:50%; background:#8c2090; color:#fff; font-size:5.5px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.vol-q-label { font-size:5px; color:#888; font-weight:600; text-transform:uppercase; letter-spacing:0.3px; }
+.vol-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:1px; border:1px solid #c06000; background:#c06000; border-radius:1px; }
+.vol-num { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:7px; font-weight:700; color:#a03000; background:#fffbe8; line-height:1; }
+.vol-num.marcado          { background:#5e1060; color:#fff; }
+.vol-num.marcado.quente   { background:#b83090; color:#fff; }
+.vol-num.marcado.atrasado { background:#1a6b1a; color:#fff; }
+.vol-qtd { padding:2px 4px 2px; border-top:1px solid #eee; }
+.vol-qtd-lbl { font-size:5px; font-weight:700; color:#333; margin-bottom:2px; }
+.vol-qtd-row { display:flex; gap:2px; }
+.vol-qtd-box { width:16px; height:10px; border:0.8px solid #999; border-radius:1px; display:flex; align-items:center; justify-content:center; font-size:5.5px; font-weight:700; color:#555; background:#fff; }
+.vol-qtd-box.sel { background:#5e1060; border-color:#5e1060; color:#fff; }
+.vol-extras { padding:2px 4px; border-top:1px solid #eee; }
+.vol-extra-row { display:flex; align-items:flex-start; gap:3px; margin-bottom:1px; }
+.vol-extra-name { font-size:4.5px; font-weight:700; color:#222; line-height:1.3; }
+.vol-extra-boxes { display:flex; gap:1.5px; }
+.vol-extra-box { width:10px; height:8px; border:0.7px solid #999; border-radius:1px; display:flex; align-items:center; justify-content:center; font-size:5px; font-weight:700; color:#555; background:#fff; }
+.vol-bolao { padding:2px 4px; border-top:1px solid #eee; }
+.vol-bolao-title { font-size:4.5px; font-weight:700; color:#222; margin-bottom:2px; line-height:1.3; }
+.vol-bolao-row { display:flex; align-items:center; gap:1.5px; flex-wrap:wrap; margin-bottom:1px; }
+.vol-bolao-box { width:10px; height:8px; border:0.7px solid #999; border-radius:1px; display:flex; align-items:center; justify-content:center; font-size:4.5px; font-weight:700; color:#555; background:#fff; }
+.vol-bolao-label { font-size:4.5px; color:#333; font-weight:700; margin-left:2px; }
+.vol-stats { background:#f4f0e8; border-top:1px solid #ddd; padding:2px 4px; display:flex; gap:6px; justify-content:center; }
+.vol-stat-item { font-size:5.5px; font-family:'Courier New',monospace; font-weight:700; color:#5e1060; }
+.vol-stat-sep  { font-size:5.5px; color:#bbb; }
+.vol-promo { background:#fffbe8; border-top:1.5px solid #8c2090; padding:3px 5px; text-align:center; }
+.vol-promo-text { font-size:7px; font-weight:700; color:#333; line-height:1.5; }
+.vol-promo-text strong { font-size:9px; color:#222; }
+.vol-promo-text .pink  { color:#b83090; font-size:8px; }
+.vol-footer { background:#fff; border-top:1px solid #ddd; padding:3px 5px; display:flex; flex-direction:column; gap:2px; }
+.vol-footer-brand { display:flex; align-items:center; gap:4px; justify-content:center; }
+.vol-footer-trevor { font-size:12px; color:#8c2090; }
+.vol-footer-loterias { font-size:5px; color:#999; font-weight:600; display:block; }
+.vol-footer-caixa { font-size:8px; font-weight:900; color:#005c9e; letter-spacing:-0.3px; }
 .vol-footer-caixa span { color:#f7941d; }
-.vol-footer-note { font-size:5.5px; color:#888; text-align:right; max-width:140px; line-height:1.4; }
-
-/* score pill */
-.vol-score-pill {
-  display:inline-flex; align-items:center; gap:3px;
-  font-size:7.5px; font-weight:700; color:#9a2b99;
-  background:#f5e8f5; border:1px solid #d0a0d0;
-  padding:2px 7px; border-radius:20px;
-}
+.vol-footer-note { font-size:4px; color:#888; text-align:center; line-height:1.3; }
+.vol-score-pill { display:inline-flex; align-items:center; gap:2px; font-size:5.5px; font-weight:700; color:#8c2090; background:#f5e8f5; border:0.8px solid #d0a0d0; padding:1px 5px; border-radius:10px; }
 
 /* ── PRINT ── */
 @media print {
@@ -3432,14 +3368,22 @@ function buildVolante(dezenas, jogoLabel, jogoIdx, scoreVal) {
     `<div class="vol-qtd-box${q==='15'?' sel':''}">${q}</div>`
   ).join('');
 
-  // Surpresinha boxes
-  const surprBoxes = ['→','N','ω','Δ','Ψ','θ','←'].map(s =>
+  // Surpresinha: 5 checkboxes
+  const surprBoxes = ['→','N','ω','Δ','Ψ'].map(s =>
     `<div class="vol-extra-box">${s}</div>`
   ).join('');
 
-  // Teimosinha boxes
-  const teimBoxes = ['ω','∑','|8','ℕ'].map(s =>
+  // Teimosinha: 4 checkboxes
+  const teimBoxes = ['ω','∑','↑8','ℕ'].map(s =>
     `<div class="vol-extra-box">${s}</div>`
+  ).join('');
+
+  // BOLÃO dezena + unidade
+  const bolaoDezeBoxes = ['0','1','2','3','4','5','6','7','8','9','10'].map(s =>
+    `<div class="vol-bolao-box">${s}</div>`
+  ).join('');
+  const bolaoUnidBoxes = ['1','2','3','4','5','6','7','8','9','10'].map(s =>
+    `<div class="vol-bolao-box">${s}</div>`
   ).join('');
 
   // Score badge
@@ -3496,40 +3440,46 @@ function buildVolante(dezenas, jogoLabel, jogoIdx, scoreVal) {
 
   <div class="vol-extras">
     <div class="vol-extra-row">
-      <div class="vol-extra-name">SURPRESINHA —</div>
-      <div class="vol-extra-boxes">${surprBoxes}</div>
-      <div class="vol-extra-desc" style="margin-left:4px">apostas deseja fazer:</div>
+      <div class="vol-extra-name">SURPRESINHA – Aqui o sistema escolhe os números por você. Indique quantas apostas deseja fazer:</div>
     </div>
-    <div class="vol-extra-row">
-      <div class="vol-extra-name">TEIMOSINHA —</div>
+    <div class="vol-extra-row" style="margin-top:1px">
+      <div class="vol-extra-boxes">${surprBoxes}</div>
+    </div>
+    <div class="vol-extra-row" style="margin-top:3px">
+      <div class="vol-extra-name">TEIMOSINHA – Escolha em quantos concursos você quer participar com este mesmo jogo (não é válido para Bolão)</div>
+    </div>
+    <div class="vol-extra-row" style="margin-top:1px">
       <div class="vol-extra-boxes">${teimBoxes}</div>
-      <div class="vol-extra-desc" style="margin-left:4px">concursos participar com este jogo</div>
     </div>
   </div>
 
+  <div class="vol-bolao">
+    <div class="vol-bolao-title">BOLÃO – Aqui você faz seu bolão de até 25 cotas. Assinale abaixo o nº de cotas:</div>
+    <div class="vol-bolao-row">${bolaoDezeBoxes}<span class="vol-bolao-label">Dezena</span></div>
+    <div class="vol-bolao-row">${bolaoUnidBoxes}<span class="vol-bolao-label">Unidade</span></div>
+  </div>
+
   <div class="vol-stats">
-    <span class="vol-stat-item">${pares}P / ${15-pares}I</span>
+    <span class="vol-stat-item">${pares}P/${dezenas.length-pares}I</span>
     <span class="vol-stat-sep">·</span>
-    <span class="vol-stat-item">Soma ${soma}</span>
+    <span class="vol-stat-item">Σ${soma}</span>
     <span class="vol-stat-sep">·</span>
-    <span class="vol-stat-item">${reptidas} rep.</span>
-    <span class="vol-stat-sep">·</span>
-    <span class="vol-stat-item">${hoje}</span>
+    <span class="vol-stat-item">${reptidas}rep</span>
   </div>
 
   <div class="vol-promo">
     <div class="vol-promo-text">
-      Aposte em <strong>15, 16, 17, 18, 19</strong> ou <strong>20</strong> números<br>
+      Aposte em <strong>15, 16, 17</strong> ou <strong>18 números</strong><br>
       e ganhe com <span class="pink">11, 12, 13, 14</span> e <span class="pink">15</span> acertos.
     </div>
-    <div class="vol-promo-warn">CONFIRA O BILHETE IMPRESSO PELO TERMINAL. ELE É O ÚNICO COMPROVANTE DA APOSTA.</div>
   </div>
 
   <div class="vol-footer">
+    <div class="vol-footer-note" style="text-align:center;font-size:4px;color:#555;font-weight:600;line-height:1.3;margin-bottom:2px">CONFIRA O BILHETE IMPRESSO PELO TERMINAL. ELE É O ÚNICO COMPROVANTE DA APOSTA.</div>
     <div class="vol-footer-brand">
       <div class="vol-footer-trevor">☘</div>
       <div>
-        <div class="vol-footer-loterias">Loterias</div>
+        <div class="vol-footer-loterias">loterias</div>
         <div class="vol-footer-caixa">CAIXA<span>●</span></div>
       </div>
     </div>
