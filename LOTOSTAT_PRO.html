@@ -3669,17 +3669,18 @@ document.addEventListener('DOMContentLoaded', () => {
 </div>
 <script>
 (function(){
-var PIF={bilhete:{w:74.5,h:178.0,quadros:[{topY:27.5},{topY:83.0},{topY:138.5}],grid:{cols:5,rows:5,xStart:7.8,xStep:11.8,yStart:7.5,yStep:9.8,cellW:9.0,cellH:7.5}},layout:{n:3,pageW:297,pageH:210,gapH:8},cal:{ox:0,oy:0,scale:100,rs:70},state:{idx:0,jogos:[]}};
+var PIF={bilhete:{w:74.0,h:178.0,quadros:[{topY:6.6},{topY:55.3},{topY:102.2}],grid:{cols:5,rows:5,xStart:5.6,xStep:13.2,yStart:4.1,yStep:6.6,cellW:9.25,cellH:5.8}},layout:{n:3,pageW:297,pageH:210,gapH:8},cal:{ox:0,oy:0,scale:100,rs:85},state:{idx:0,jogos:[]}};
 window._PIF=PIF;
 try{var c=JSON.parse(localStorage.getItem('loto_pif_cal')||'{}');if(c.ox!=null)PIF.cal.ox=c.ox;if(c.oy!=null)PIF.cal.oy=c.oy;if(c.scale!=null)PIF.cal.scale=c.scale;if(c.rs!=null)PIF.cal.rs=c.rs;}catch(e){}
 window.abrirModalImpressaoFisica=function(jogos){var modal=document.getElementById('modalImpFisica');if(!modal)return;PIF.state.jogos=jogos||[];PIF.state.idx=0;modal.style.display='flex';var ox=document.getElementById('pif-ox'),oy=document.getElementById('pif-oy'),sc=document.getElementById('pif-sc'),rs=document.getElementById('pif-rs');if(ox){ox.value=PIF.cal.ox;document.getElementById('pif-vx').textContent=PIF.cal.ox;}if(oy){oy.value=PIF.cal.oy;document.getElementById('pif-vy').textContent=PIF.cal.oy;}if(sc){sc.value=PIF.cal.scale;document.getElementById('pif-vs').textContent=PIF.cal.scale;}if(rs){rs.value=PIF.cal.rs;document.getElementById('pif-vr').textContent=PIF.cal.rs;}pifSetLayout(PIF.layout.n);};
 window.pifSetLayout=function(n){PIF.layout.n=n;document.querySelectorAll('.pif-btn-lay').forEach(function(btn){var a=parseInt(btn.dataset.n)===n;btn.style.border=a?'2px solid #7c3aed':'2px solid #444';btn.style.background=a?'#7c3aed':'transparent';btn.style.color=a?'#fff':'#aaa';btn.style.fontWeight=a?'bold':'normal';});pifRender();};
 function pifGetCal(){return{ox:parseFloat(document.getElementById('pif-ox')?.value||0),oy:parseFloat(document.getElementById('pif-oy')?.value||0),scale:parseFloat(document.getElementById('pif-sc')?.value||100),rs:parseFloat(document.getElementById('pif-rs')?.value||70)};}window.pifGetCal=pifGetCal;
 window.pifRender=function(){
-var canvas=document.getElementById('pif-canvas');
-if(!canvas)return;
-var cal=pifGetCal(),n=PIF.layout.n,showGuide=document.getElementById('pif-guide')?.checked,showBg=document.getElementById('pif-bg')?.checked;
-var DPI=96,PS=2.0,m2p=function(mm){return(mm/25.4)*DPI*PS;};
+var canvas=document.getElementById('pif-canvas');if(!canvas)return;
+var cal=pifGetCal(),n=PIF.layout.n;
+var showGuide=document.getElementById('pif-guide')?.checked;
+var showBg=document.getElementById('pif-bg')?.checked;
+var DPI=96,PS=2,m2p=function(mm){return mm/25.4*DPI*PS;};
 var B=PIF.bilhete,scl=cal.scale/100;
 var pageW=m2p(297),pageH=m2p(210);
 canvas.width=pageW;canvas.height=pageH;
@@ -3687,100 +3688,77 @@ canvas.style.width=(pageW/PS)+'px';canvas.style.height=(pageH/PS)+'px';
 var ctx=canvas.getContext('2d');
 ctx.fillStyle='#fff';ctx.fillRect(0,0,pageW,pageH);
 var jogos=PIF.state.jogos;
-var bilW=m2p(B.w*scl),bilH=m2p(B.h*scl);
+var bW=m2p(B.w*scl),bH=m2p(B.h*scl);
 var totalW=n*B.w*scl+(n-1)*PIF.layout.gapH;
 var startX=(297-totalW)/2+cal.ox;
 var startY=(210-B.h*scl)/2+cal.oy;
 for(var b=0;b<n;b++){
-  var ji=(PIF.state.idx+b)%Math.max(jogos.length,1);
-  var jogo=jogos[ji],dez=jogo?jogo.dezenas:[];
-  var bX=m2p(startX+b*(B.w*scl+PIF.layout.gapH));
-  var bY=m2p(startY);
-  var bW=bilW,bH=bilH;
-  if(showBg){
-    var hH=m2p(22*scl);
-    var grad=ctx.createLinearGradient(bX,bY,bX,bY+hH);
-    grad.addColorStop(0,'#9c1aac');grad.addColorStop(0.5,'#c41fa0');grad.addColorStop(1,'#8a1590');
-    ctx.fillStyle=grad;ctx.fillRect(bX,bY,bW,hH);
-    ctx.font='bold '+m2p(7*scl)+'px serif';ctx.fillStyle='#fff';
-    ctx.textAlign='left';ctx.textBaseline='middle';
-    ctx.fillText('☘',bX+m2p(2*scl),bY+hH/2);
-    ctx.font='italic bold '+m2p(8*scl)+'px Arial';
-    ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText('lotofácil',bX+bW/2+m2p(2*scl),bY+hH/2);
-    var instY=bY+hH;var instH=m2p(5*scl);
-    ctx.fillStyle='#f0f0f0';ctx.fillRect(bX,instY,bW,instH);
-    ctx.strokeStyle='#ddd';ctx.lineWidth=0.5;ctx.strokeRect(bX,instY,bW,instH);
-    ctx.font='bold '+m2p(1.9*scl)+'px Arial';ctx.fillStyle='#555';
-    ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText('VOCÊ PODE JOGAR MARCANDO EM 1, 2 OU 3 DOS QUADROS ABAIXO:',bX+bW/2,instY+instH/2);
-    for(var qi=0;qi<B.quadros.length;qi++){
-      var q=B.quadros[qi];
-      var qY=bY+m2p(q.topY*scl);
-      var qH=m2p((B.grid.rows*B.grid.yStep+2)*scl);
-      ctx.fillStyle='#fffde7';ctx.fillRect(bX,qY,bW,qH);
-      ctx.strokeStyle='#c8b060';ctx.lineWidth=0.5;ctx.strokeRect(bX,qY,bW,qH);
-      var cW=m2p(B.grid.cellW*scl),cH=m2p(B.grid.cellH*scl);
-      for(var row=0;row<B.grid.rows;row++){
-        for(var col=0;col<B.grid.cols;col++){
-          var num=(B.grid.cols-1-col)*B.grid.rows+row+1;
-          var cx2=bX+m2p((B.grid.xStart+col*B.grid.xStep)*scl);
-          var cy2=qY+m2p((B.grid.yStart+row*B.grid.yStep)*scl);
-          ctx.fillStyle='#fffde7';
-          ctx.strokeStyle='#e09090';ctx.lineWidth=m2p(0.4*scl);
-          ctx.beginPath();ctx.rect(cx2-cW/2,cy2-cH/2,cW,cH);ctx.fill();ctx.stroke();
-          ctx.fillStyle='#cc2244';
-          ctx.font='bold '+m2p(3.2*scl)+'px Arial';
-          ctx.textAlign='center';ctx.textBaseline='middle';
-          ctx.fillText(String(num).padStart(2,'0'),cx2,cy2);
-        }
-      }
-    }
-    var promoY=bY+bH-m2p(22*scl);
-    ctx.fillStyle='#fffde7';ctx.fillRect(bX,promoY,bW,m2p(14*scl));
-    ctx.strokeStyle='#c0a000';ctx.lineWidth=1;ctx.strokeRect(bX,promoY,bW,m2p(14*scl));
-    ctx.font='bold '+m2p(4.5*scl)+'px Arial';ctx.fillStyle='#d4260a';
-    ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText('Aposte em 15, 16, 17 ou 18 números',bX+bW/2,promoY+m2p(5*scl));
-    ctx.font=m2p(3.5*scl)+'px Arial';ctx.fillStyle='#333';
-    ctx.fillText('e ganhe com 11, 12, 13, 14 e 15 acertos.',bX+bW/2,promoY+m2p(10*scl));
-    var lcY=bY+bH-m2p(8*scl);
-    ctx.fillStyle='#fff';ctx.fillRect(bX,lcY,bW,m2p(8*scl));
-    ctx.font='bold '+m2p(3.5*scl)+'px Arial';ctx.fillStyle='#005c9e';
-    ctx.textAlign='left';ctx.textBaseline='middle';
-    ctx.fillText('loterias',bX+m2p(3*scl),lcY+m2p(3*scl));
-    ctx.font='bold '+m2p(4.5*scl)+'px Arial';
-    ctx.fillText('CAIXA',bX+m2p(3*scl),lcY+m2p(6.5*scl));
-    ctx.fillStyle='#f7941d';ctx.fillText('●',bX+m2p(20*scl),lcY+m2p(6.5*scl));
-    ctx.strokeStyle='#bbb';ctx.lineWidth=0.5;ctx.strokeRect(bX,bY,bW,bH);
-  }
-  if(showGuide){
-    ctx.strokeStyle='rgba(0,150,255,0.5)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
-    for(var qi2=0;qi2<B.quadros.length;qi2++){
-      var q2=B.quadros[qi2];
-      ctx.strokeRect(bX,bY+m2p(q2.topY*scl),bW,m2p(B.grid.rows*B.grid.yStep*scl));
-    }
-    ctx.setLineDash([]);
-  }
-  var rW=m2p(B.grid.cellW*scl*cal.rs/100),rH=m2p(B.grid.cellH*scl*cal.rs/100);
-  ctx.fillStyle='rgba(180,20,20,0.65)';
-  for(var di=0;di<dez.length;di++){
-    var d=dez[di];if(d<1||d>25)continue;
-    var col2=(B.grid.cols-1)-Math.floor((d-1)/B.grid.rows);
-    var row2=(d-1)%B.grid.rows;
-    for(var qi3=0;qi3<B.quadros.length;qi3++){
-      var q3=B.quadros[qi3];
-      var cx3=bX+m2p((B.grid.xStart+col2*B.grid.xStep)*scl);
-      var cy3=bY+m2p((q3.topY+B.grid.yStart+row2*B.grid.yStep)*scl);
-      ctx.fillRect(cx3-rW/2,cy3-rH/2,rW,rH);
-    }
-  }
-  if(jogo){
-    ctx.fillStyle='#555';ctx.textAlign='center';ctx.textBaseline='top';
-    ctx.font=m2p(2.2*scl)+'px Arial';
-    ctx.fillText(jogo.label||'Jogo '+(ji+1),bX+bW/2,bY+bH+m2p(1));
-  }
+var ji=(PIF.state.idx+b)%Math.max(jogos.length,1);
+var jogo=jogos[ji],dez=jogo?jogo.dezenas:[];
+var bX=m2p(startX+b*(B.w*scl+PIF.layout.gapH));
+var bY=m2p(startY);
+if(showBg){
+ctx.fillStyle='#fff';ctx.fillRect(bX,bY,bW,bH);
+var hH=m2p(27*scl);
+var hg=ctx.createLinearGradient(bX,bY,bX+bW,bY+hH);
+hg.addColorStop(0,'#8b0f9e');hg.addColorStop(0.4,'#c01a9a');hg.addColorStop(1,'#7a0f8a');
+ctx.fillStyle=hg;ctx.fillRect(bX,bY,bW,hH);
+var cfx=[0.15,0.25,0.42,0.55,0.68,0.78,0.88,0.35,0.62,0.82];
+var cfy=[0.15,0.5,0.25,0.7,0.35,0.15,0.55,0.8,0.1,0.8];
+var cfc=['#4fc3f7','#f06292','#aed581','#fff59d','#f48fb1','#80deea','#ffe082','#b39ddb','#4db6ac','#ff8a65'];
+for(var ci=0;ci<cfx.length;ci++){ctx.fillStyle=cfc[ci];ctx.save();ctx.translate(bX+bW*cfx[ci],bY+hH*cfy[ci]);ctx.rotate(ci*0.4);ctx.fillRect(-m2p(1.2*scl),-m2p(0.5*scl),m2p(2.4*scl),m2p(0.9*scl));ctx.restore();}
+ctx.font='bold '+m2p(8*scl)+'px serif';ctx.fillStyle='#2d8a2d';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('☘',bX+m2p(2.5*scl),bY+hH*0.45);
+ctx.font='italic bold '+m2p(9.5*scl)+'px Arial';ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('lotofácil',bX+bW*0.55,bY+hH*0.52);
+var iY=bY+hH,iH=m2p(4.5*scl);
+ctx.fillStyle='#f5f5f5';ctx.fillRect(bX,iY,bW,iH);
+ctx.fillStyle='#888';ctx.font='bold '+m2p(1.8*scl)+'px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+ctx.fillText('VOCÊ PODE JOGAR MARCANDO EM 1, 2 OU 3 DOS QUADROS ABAIXO:',bX+bW/2,iY+iH/2);
+for(var qi=0;qi<B.quadros.length;qi++){
+var q=B.quadros[qi];var qTop=bY+m2p(q.topY*scl);var qH2=m2p((B.grid.rows*B.grid.yStep+2)*scl);
+ctx.fillStyle='#fffde7';ctx.fillRect(bX,qTop,bW,qH2);
+ctx.strokeStyle='#d4b000';ctx.lineWidth=0.5;ctx.strokeRect(bX,qTop,bW,qH2);
+var cW2=m2p(B.grid.cellW*scl),cH2=m2p(B.grid.cellH*scl);
+for(var row=0;row<B.grid.rows;row++){for(var col=0;col<B.grid.cols;col++){
+var num=(B.grid.cols-1-col)*B.grid.rows+row+1;
+var cx2=bX+m2p((B.grid.xStart+col*B.grid.xStep)*scl);
+var cy2=qTop+m2p((B.grid.yStart+row*B.grid.yStep)*scl);
+ctx.fillStyle='#fffde7';ctx.strokeStyle='#e08888';ctx.lineWidth=m2p(0.35*scl);
+ctx.beginPath();ctx.rect(cx2-cW2/2,cy2-cH2/2,cW2,cH2);ctx.fill();ctx.stroke();
+ctx.fillStyle='#cc1133';ctx.font='bold '+m2p(3.0*scl)+'px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+ctx.fillText(String(num).padStart(2,'0'),cx2,cy2);}}}
+var pY=bY+bH-m2p(20*scl);
+ctx.fillStyle='#fffde7';ctx.fillRect(bX,pY,bW,m2p(13*scl));
+ctx.strokeStyle='#c8a800';ctx.lineWidth=0.8;ctx.strokeRect(bX,pY,bW,m2p(13*scl));
+ctx.font='bold '+m2p(4.2*scl)+'px Arial';ctx.fillStyle='#cc1100';ctx.textAlign='center';ctx.textBaseline='middle';
+ctx.fillText('Aposte em 15, 16, 17 ou 18 números',bX+bW/2,pY+m2p(4*scl));
+ctx.font='bold '+m2p(3.5*scl)+'px Arial';ctx.fillStyle='#333';
+ctx.fillText('e ganhe com 11, 12, 13, 14 e 15 acertos.',bX+bW/2,pY+m2p(9.5*scl));
+var fY=bY+bH-m2p(7*scl);
+ctx.fillStyle='#fff';ctx.fillRect(bX,fY,bW,m2p(7*scl));
+ctx.font='bold '+m2p(2.8*scl)+'px Arial';ctx.fillStyle='#005c9e';ctx.textAlign='left';ctx.textBaseline='middle';
+ctx.fillText('loterias',bX+m2p(3*scl),fY+m2p(2.5*scl));
+ctx.font='bold '+m2p(4*scl)+'px Arial';ctx.fillText('CAIXA',bX+m2p(3*scl),fY+m2p(5.5*scl));
+ctx.fillStyle='#f7941d';ctx.fillText('●',bX+m2p(20.5*scl),fY+m2p(5.5*scl));
+ctx.strokeStyle='#bbb';ctx.lineWidth=0.5;ctx.strokeRect(bX,bY,bW,bH);
 }
+if(showGuide){
+ctx.strokeStyle='rgba(0,120,255,0.5)';ctx.lineWidth=1;ctx.setLineDash([4,3]);
+for(var qi2=0;qi2<B.quadros.length;qi2++){var q2=B.quadros[qi2];
+ctx.strokeRect(bX,bY+m2p(q2.topY*scl),bW,m2p((B.grid.rows*B.grid.yStep+2)*scl));}
+ctx.setLineDash([]);}
+var rW=m2p(B.grid.cellW*scl*cal.rs/100),rH=m2p(B.grid.cellH*scl*cal.rs/100);
+ctx.fillStyle='rgba(200,0,0,0.60)';
+for(var di=0;di<dez.length;di++){
+var d=dez[di];if(d<1||d>25)continue;
+var col2=(B.grid.cols-1)-Math.floor((d-1)/B.grid.rows);
+var row2=(d-1)%B.grid.rows;
+for(var qi3=0;qi3<B.quadros.length;qi3++){
+var q3=B.quadros[qi3];
+var cx3=bX+m2p((B.grid.xStart+col2*B.grid.xStep)*scl);
+var cy3=bY+m2p((q3.topY+B.grid.yStart+row2*B.grid.yStep)*scl);
+ctx.fillRect(cx3-rW/2,cy3-rH/2,rW,rH);}}
+if(jogo){ctx.fillStyle='#444';ctx.textAlign='center';ctx.textBaseline='top';
+ctx.font=m2p(2.2*scl)+'px Arial';ctx.fillText(jogo.label||'Jogo '+(ji+1),bX+bW/2,bY+bH+m2p(1.5));}}
 window.pifUpdateInfo();window.pifUpdateJogoLabel();
 };
 window.pifUpdateInfo=function(){var el=document.getElementById('pif-info');if(!el)return;var n=PIF.layout.n,tot=PIF.state.jogos.length,folhas=Math.ceil(tot/n);el.innerHTML='<b style="color:#a78bfa">'+tot+' jogo(s)</b> disponíveis<br><b style="color:#a78bfa">'+n+' bilhete(s)</b> por folha A4<br><b style="color:#a78bfa">'+folhas+' folha(s)</b> necessárias<br><b style="color:#a78bfa">A4 Paisagem</b> · 297×210mm<br><span style="color:#6b7280">Bilhetes lado a lado</span>';};
