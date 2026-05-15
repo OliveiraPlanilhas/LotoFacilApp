@@ -3669,7 +3669,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </div>
 <script>
 (function(){
-var PIF={bilhete:{w:74.0,h:178.0,quadros:[{topY:6.6},{topY:55.3},{topY:102.2}],grid:{cols:5,rows:5,xStart:5.6,xStep:13.2,yStart:4.1,yStep:6.6,cellW:9.25,cellH:5.8}},layout:{n:3,pageW:297,pageH:210,gapH:8},cal:{ox:0,oy:0,scale:100,rs:85},state:{idx:0,jogos:[]}};
+var PIF={bilhete:{w:74.0,h:178.0,quadros:[{topY:7.25},{topY:51.9},{topY:98.6}],grid:{cols:5,rows:5,xStart:5.6,xStep:13.1,yStart:3.45,yStep:6.9,cellW:11.0,cellH:6.9}},layout:{n:3,pageW:297,pageH:210,gapH:8},cal:{ox:0,oy:0,scale:100,rs:88},state:{idx:0,jogos:[]}};
 window._PIF=PIF;
 try{var c=JSON.parse(localStorage.getItem('loto_pif_cal')||'{}');if(c.ox!=null)PIF.cal.ox=c.ox;if(c.oy!=null)PIF.cal.oy=c.oy;if(c.scale!=null)PIF.cal.scale=c.scale;if(c.rs!=null)PIF.cal.rs=c.rs;}catch(e){}
 window.abrirModalImpressaoFisica=function(jogos){var modal=document.getElementById('modalImpFisica');if(!modal)return;PIF.state.jogos=jogos||[];PIF.state.idx=0;modal.style.display='flex';var ox=document.getElementById('pif-ox'),oy=document.getElementById('pif-oy'),sc=document.getElementById('pif-sc'),rs=document.getElementById('pif-rs');if(ox){ox.value=PIF.cal.ox;document.getElementById('pif-vx').textContent=PIF.cal.ox;}if(oy){oy.value=PIF.cal.oy;document.getElementById('pif-vy').textContent=PIF.cal.oy;}if(sc){sc.value=PIF.cal.scale;document.getElementById('pif-vs').textContent=PIF.cal.scale;}if(rs){rs.value=PIF.cal.rs;document.getElementById('pif-vr').textContent=PIF.cal.rs;}pifSetLayout(PIF.layout.n);};
