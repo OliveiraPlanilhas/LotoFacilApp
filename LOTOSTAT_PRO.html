@@ -3675,7 +3675,114 @@ try{var c=JSON.parse(localStorage.getItem('loto_pif_cal')||'{}');if(c.ox!=null)P
 window.abrirModalImpressaoFisica=function(jogos){var modal=document.getElementById('modalImpFisica');if(!modal)return;PIF.state.jogos=jogos||[];PIF.state.idx=0;modal.style.display='flex';var ox=document.getElementById('pif-ox'),oy=document.getElementById('pif-oy'),sc=document.getElementById('pif-sc'),rs=document.getElementById('pif-rs');if(ox){ox.value=PIF.cal.ox;document.getElementById('pif-vx').textContent=PIF.cal.ox;}if(oy){oy.value=PIF.cal.oy;document.getElementById('pif-vy').textContent=PIF.cal.oy;}if(sc){sc.value=PIF.cal.scale;document.getElementById('pif-vs').textContent=PIF.cal.scale;}if(rs){rs.value=PIF.cal.rs;document.getElementById('pif-vr').textContent=PIF.cal.rs;}pifSetLayout(PIF.layout.n);};
 window.pifSetLayout=function(n){PIF.layout.n=n;document.querySelectorAll('.pif-btn-lay').forEach(function(btn){var a=parseInt(btn.dataset.n)===n;btn.style.border=a?'2px solid #7c3aed':'2px solid #444';btn.style.background=a?'#7c3aed':'transparent';btn.style.color=a?'#fff':'#aaa';btn.style.fontWeight=a?'bold':'normal';});pifRender();};
 function pifGetCal(){return{ox:parseFloat(document.getElementById('pif-ox')?.value||0),oy:parseFloat(document.getElementById('pif-oy')?.value||0),scale:parseFloat(document.getElementById('pif-sc')?.value||100),rs:parseFloat(document.getElementById('pif-rs')?.value||70)};}window.pifGetCal=pifGetCal;
-window.pifRender=function(){var canvas=document.getElementById('pif-canvas');if(!canvas)return;var cal=pifGetCal(),n=PIF.layout.n,showGuide=document.getElementById('pif-guide')?.checked,showBg=document.getElementById('pif-bg')?.checked;var DPI=96,PS=2.0,m2p=function(mm){return(mm/25.4)*DPI*PS;};var B=PIF.bilhete,scl=cal.scale/100;var pageW=m2p(297),pageH=m2p(210);canvas.width=pageW;canvas.height=pageH;canvas.style.width=pageW+'px';canvas.style.height=pageH+'px';var ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,pageW,pageH);var jogos=PIF.state.jogos;var bilW=B.w*scl,bilH=B.h*scl;var totalW=n*bilW+(n-1)*PIF.layout.gapH;var startX=(297-totalW)/2+cal.ox;var startY=(210-bilH)/2+cal.oy;for(var b=0;b<n;b++){var ji=(PIF.state.idx+b)%Math.max(jogos.length,1);var jogo=jogos[ji],dez=jogo?jogo.dezenas:[];var bX=m2p(startX+b*(bilW+PIF.layout.gapH));var bY=m2p(startY);var bW=m2p(bilW),bH=m2p(bilH);if(showBg){ctx.fillStyle='#7b1fa2';ctx.fillRect(bX,bY,bW,m2p(22*scl));ctx.fillStyle='#fff';ctx.font='bold '+m2p(6*scl)+'px Arial';ctx.textAlign='center';ctx.fillText('lotofácil',bX+bW/2,bY+m2p(14*scl));ctx.fillStyle='#fffde7';ctx.fillRect(bX,bY+m2p(22*scl),bW,bH-m2p(22*scl));ctx.strokeStyle='#ccc';ctx.lineWidth=0.5;ctx.strokeRect(bX,bY,bW,bH);ctx.fillStyle='#9c27b0';ctx.textAlign='center';ctx.textBaseline='middle';for(var qi=0;qi<B.quadros.length;qi++){var q=B.quadros[qi];for(var row=0;row<B.grid.rows;row++){for(var col=0;col<B.grid.cols;col++){var num=row*B.grid.cols+col+1;var cx2=bX+m2p((B.grid.xStart+col*B.grid.xStep)*scl);var cy2=bY+m2p((q.topY+B.grid.yStart+row*B.grid.yStep)*scl);ctx.font=m2p(2.5*scl)+'px Arial';ctx.fillText(String(num).padStart(2,'0'),cx2,cy2);}}}}if(showGuide){ctx.strokeStyle='rgba(0,150,255,0.4)';ctx.lineWidth=0.5;ctx.setLineDash([2,2]);for(var qi2=0;qi2<B.quadros.length;qi2++){var q2=B.quadros[qi2];ctx.strokeRect(bX,bY+m2p(q2.topY*scl),bW,m2p(B.grid.rows*B.grid.yStep*scl));}ctx.setLineDash([]);}var rW=m2p(B.grid.cellW*scl*cal.rs/100),rH=m2p(B.grid.cellH*scl*cal.rs/100);ctx.fillStyle='rgba(123,31,162,0.55)';for(var di=0;di<dez.length;di++){var d=dez[di];if(d<1||d>25)continue;var col2=Math.floor((d-1)/B.grid.rows),row2=(d-1)%B.grid.rows;for(var qi3=0;qi3<B.quadros.length;qi3++){var q3=B.quadros[qi3];var cx3=bX+m2p((B.grid.xStart+col2*B.grid.xStep)*scl);var cy3=bY+m2p((q3.topY+B.grid.yStart+row2*B.grid.yStep)*scl);ctx.fillRect(cx3-rW/2,cy3-rH/2,rW,rH);}}if(jogo){ctx.fillStyle='#555';ctx.textAlign='center';ctx.textBaseline='top';ctx.font=m2p(2.2*scl)+'px Arial';ctx.fillText(jogo.label||'Jogo '+(ji+1),bX+bW/2,bY+bH+m2p(1));}}window.pifUpdateInfo();window.pifUpdateJogoLabel();};
+window.pifRender=function(){
+var canvas=document.getElementById('pif-canvas');
+if(!canvas)return;
+var cal=pifGetCal(),n=PIF.layout.n,showGuide=document.getElementById('pif-guide')?.checked,showBg=document.getElementById('pif-bg')?.checked;
+var DPI=96,PS=2.0,m2p=function(mm){return(mm/25.4)*DPI*PS;};
+var B=PIF.bilhete,scl=cal.scale/100;
+var pageW=m2p(297),pageH=m2p(210);
+canvas.width=pageW;canvas.height=pageH;
+canvas.style.width=(pageW/PS)+'px';canvas.style.height=(pageH/PS)+'px';
+var ctx=canvas.getContext('2d');
+ctx.fillStyle='#fff';ctx.fillRect(0,0,pageW,pageH);
+var jogos=PIF.state.jogos;
+var bilW=m2p(B.w*scl),bilH=m2p(B.h*scl);
+var totalW=n*B.w*scl+(n-1)*PIF.layout.gapH;
+var startX=(297-totalW)/2+cal.ox;
+var startY=(210-B.h*scl)/2+cal.oy;
+for(var b=0;b<n;b++){
+  var ji=(PIF.state.idx+b)%Math.max(jogos.length,1);
+  var jogo=jogos[ji],dez=jogo?jogo.dezenas:[];
+  var bX=m2p(startX+b*(B.w*scl+PIF.layout.gapH));
+  var bY=m2p(startY);
+  var bW=bilW,bH=bilH;
+  if(showBg){
+    var hH=m2p(22*scl);
+    var grad=ctx.createLinearGradient(bX,bY,bX,bY+hH);
+    grad.addColorStop(0,'#9c1aac');grad.addColorStop(0.5,'#c41fa0');grad.addColorStop(1,'#8a1590');
+    ctx.fillStyle=grad;ctx.fillRect(bX,bY,bW,hH);
+    ctx.font='bold '+m2p(7*scl)+'px serif';ctx.fillStyle='#fff';
+    ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.fillText('☘',bX+m2p(2*scl),bY+hH/2);
+    ctx.font='italic bold '+m2p(8*scl)+'px Arial';
+    ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('lotofácil',bX+bW/2+m2p(2*scl),bY+hH/2);
+    var instY=bY+hH;var instH=m2p(5*scl);
+    ctx.fillStyle='#f0f0f0';ctx.fillRect(bX,instY,bW,instH);
+    ctx.strokeStyle='#ddd';ctx.lineWidth=0.5;ctx.strokeRect(bX,instY,bW,instH);
+    ctx.font='bold '+m2p(1.9*scl)+'px Arial';ctx.fillStyle='#555';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('VOCÊ PODE JOGAR MARCANDO EM 1, 2 OU 3 DOS QUADROS ABAIXO:',bX+bW/2,instY+instH/2);
+    for(var qi=0;qi<B.quadros.length;qi++){
+      var q=B.quadros[qi];
+      var qY=bY+m2p(q.topY*scl);
+      var qH=m2p((B.grid.rows*B.grid.yStep+2)*scl);
+      ctx.fillStyle='#fffde7';ctx.fillRect(bX,qY,bW,qH);
+      ctx.strokeStyle='#c8b060';ctx.lineWidth=0.5;ctx.strokeRect(bX,qY,bW,qH);
+      var cW=m2p(B.grid.cellW*scl),cH=m2p(B.grid.cellH*scl);
+      for(var row=0;row<B.grid.rows;row++){
+        for(var col=0;col<B.grid.cols;col++){
+          var num=(B.grid.cols-1-col)*B.grid.rows+row+1;
+          var cx2=bX+m2p((B.grid.xStart+col*B.grid.xStep)*scl);
+          var cy2=qY+m2p((B.grid.yStart+row*B.grid.yStep)*scl);
+          ctx.fillStyle='#fffde7';
+          ctx.strokeStyle='#e09090';ctx.lineWidth=m2p(0.4*scl);
+          ctx.beginPath();ctx.rect(cx2-cW/2,cy2-cH/2,cW,cH);ctx.fill();ctx.stroke();
+          ctx.fillStyle='#cc2244';
+          ctx.font='bold '+m2p(3.2*scl)+'px Arial';
+          ctx.textAlign='center';ctx.textBaseline='middle';
+          ctx.fillText(String(num).padStart(2,'0'),cx2,cy2);
+        }
+      }
+    }
+    var promoY=bY+bH-m2p(22*scl);
+    ctx.fillStyle='#fffde7';ctx.fillRect(bX,promoY,bW,m2p(14*scl));
+    ctx.strokeStyle='#c0a000';ctx.lineWidth=1;ctx.strokeRect(bX,promoY,bW,m2p(14*scl));
+    ctx.font='bold '+m2p(4.5*scl)+'px Arial';ctx.fillStyle='#d4260a';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('Aposte em 15, 16, 17 ou 18 números',bX+bW/2,promoY+m2p(5*scl));
+    ctx.font=m2p(3.5*scl)+'px Arial';ctx.fillStyle='#333';
+    ctx.fillText('e ganhe com 11, 12, 13, 14 e 15 acertos.',bX+bW/2,promoY+m2p(10*scl));
+    var lcY=bY+bH-m2p(8*scl);
+    ctx.fillStyle='#fff';ctx.fillRect(bX,lcY,bW,m2p(8*scl));
+    ctx.font='bold '+m2p(3.5*scl)+'px Arial';ctx.fillStyle='#005c9e';
+    ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.fillText('loterias',bX+m2p(3*scl),lcY+m2p(3*scl));
+    ctx.font='bold '+m2p(4.5*scl)+'px Arial';
+    ctx.fillText('CAIXA',bX+m2p(3*scl),lcY+m2p(6.5*scl));
+    ctx.fillStyle='#f7941d';ctx.fillText('●',bX+m2p(20*scl),lcY+m2p(6.5*scl));
+    ctx.strokeStyle='#bbb';ctx.lineWidth=0.5;ctx.strokeRect(bX,bY,bW,bH);
+  }
+  if(showGuide){
+    ctx.strokeStyle='rgba(0,150,255,0.5)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+    for(var qi2=0;qi2<B.quadros.length;qi2++){
+      var q2=B.quadros[qi2];
+      ctx.strokeRect(bX,bY+m2p(q2.topY*scl),bW,m2p(B.grid.rows*B.grid.yStep*scl));
+    }
+    ctx.setLineDash([]);
+  }
+  var rW=m2p(B.grid.cellW*scl*cal.rs/100),rH=m2p(B.grid.cellH*scl*cal.rs/100);
+  ctx.fillStyle='rgba(180,20,20,0.65)';
+  for(var di=0;di<dez.length;di++){
+    var d=dez[di];if(d<1||d>25)continue;
+    var col2=(B.grid.cols-1)-Math.floor((d-1)/B.grid.rows);
+    var row2=(d-1)%B.grid.rows;
+    for(var qi3=0;qi3<B.quadros.length;qi3++){
+      var q3=B.quadros[qi3];
+      var cx3=bX+m2p((B.grid.xStart+col2*B.grid.xStep)*scl);
+      var cy3=bY+m2p((q3.topY+B.grid.yStart+row2*B.grid.yStep)*scl);
+      ctx.fillRect(cx3-rW/2,cy3-rH/2,rW,rH);
+    }
+  }
+  if(jogo){
+    ctx.fillStyle='#555';ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.font=m2p(2.2*scl)+'px Arial';
+    ctx.fillText(jogo.label||'Jogo '+(ji+1),bX+bW/2,bY+bH+m2p(1));
+  }
+}
+window.pifUpdateInfo();window.pifUpdateJogoLabel();
+};
 window.pifUpdateInfo=function(){var el=document.getElementById('pif-info');if(!el)return;var n=PIF.layout.n,tot=PIF.state.jogos.length,folhas=Math.ceil(tot/n);el.innerHTML='<b style="color:#a78bfa">'+tot+' jogo(s)</b> disponíveis<br><b style="color:#a78bfa">'+n+' bilhete(s)</b> por folha A4<br><b style="color:#a78bfa">'+folhas+' folha(s)</b> necessárias<br><b style="color:#a78bfa">A4 Paisagem</b> · 297×210mm<br><span style="color:#6b7280">Bilhetes lado a lado</span>';};
 window.pifUpdateJogoLabel=function(){var jogo=PIF.state.jogos[PIF.state.idx];var lbl=document.getElementById('pif-jogo-lbl'),dez=document.getElementById('pif-jogo-dez');if(lbl)lbl.textContent=jogo?(jogo.label||'Jogo '+(PIF.state.idx+1)):'Sem jogos';if(dez&&jogo)dez.textContent=jogo.dezenas.map(function(d){return String(d).padStart(2,'0');}).join(' ');};
 window.pifPrevJogo=function(){var n=PIF.state.jogos.length;if(!n)return;PIF.state.idx=(PIF.state.idx-1+n)%n;pifRender();};
