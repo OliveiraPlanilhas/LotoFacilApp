@@ -454,7 +454,7 @@ input[type=range]::-webkit-slider-thumb {
 .vol-q-badge { width:10px; height:10px; border-radius:50%; background:#8c2090; color:#fff; font-size:5.5px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
 .vol-q-label { font-size:5px; color:#888; font-weight:600; text-transform:uppercase; letter-spacing:0.3px; }
 .vol-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:1px; border:1px solid #c06000; background:#c06000; border-radius:1px; }
-.vol-num { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:7px; font-weight:700; color:#a03000; background:#fffbe8; line-height:1; }
+.vol-num { width:100%; aspect-ratio:1.35; display:flex; align-items:center; justify-content:center; font-size:7px; font-weight:700; color:#a03000; background:#fffbe8; line-height:1; }
 .vol-num.marcado          { background:#5e1060; color:#fff; }
 .vol-num.marcado.quente   { background:#b83090; color:#fff; }
 .vol-num.marcado.atrasado { background:#1a6b1a; color:#fff; }
@@ -3347,8 +3347,9 @@ function buildVolante(dezenas, jogoLabel, jogoIdx, scoreVal) {
   const reptidas= DB.length ? dezenas.filter(x => DB[DB.length-1].dezenas.includes(x)).length : 0;
   const hoje    = new Date().toLocaleDateString('pt-BR');
 
-  // Grid 5×5
-  const gridNums = Array.from({length:25},(_,i)=>i+1).map(n => {
+  // Grid 5×5 — ordem por colunas (bilhete físico: col1=01-05, col2=06-10...)
+  const colMajorOrder = Array.from({length:25},(_,i)=>{ const col=i%5; const row=Math.floor(i/5); return col*5+row+1; });
+  const gridNums = colMajorOrder.map(n => {
     const sel = dezenas.includes(n);
     const fR  = freqAll[n]/maxFreq;
     const cic = ciclos[n]||7;
