@@ -42,34 +42,223 @@ textarea{background:#0d1117;border:1px solid #30363d;color:#e6edf3;border-radius
 .status.ok{background:#0a2a1a;border:1px solid #00e676;color:#00e676}
 .status.err{background:#2a0a0a;border:1px solid #f85149;color:#f85149}
 .status.info{background:#0a1a2a;border:1px solid #58a6ff;color:#58a6ff}
-.volante{position:relative;width:82.55mm;height:186.97mm;background:#fff;font-family:Arial,Helvetica,sans-serif;color:#000;display:inline-block;vertical-align:top;overflow:hidden;border:none;box-sizing:content-box}
-.volante::before{content:'';position:absolute;z-index:10;background:#000;top:0;left:-5mm;width:4mm;height:0.25mm;box-shadow:87.55mm 0 0 0 #000,0 186.97mm 0 0 #000,87.55mm 186.97mm 0 0 #000}
-.volante::after{content:'';position:absolute;z-index:10;background:#000;top:-5mm;left:0;width:0.25mm;height:4mm;box-shadow:82.55mm 0 0 0 #000,0 191.97mm 0 0 #000,82.55mm 191.97mm 0 0 #000}
-.vol-header{position:absolute;top:0;left:0;right:0;background:linear-gradient(160deg,#6b1d6d 0%,#9a2b99 40%,#c03a8e 70%,#9a2070 100%);height:38mm;overflow:hidden;display:flex;align-items:center;gap:6px;padding:5px 8px 4px}
+
+/* ===== VOLANTE OMR — dimensões oficiais Caixa (PDF LotFacilVolante.pdf) =====
+   PAGE  = 82.55 x 186.97 mm
+   CELL  = 4.73  x 3.47  mm
+   COL_X = [10.47,22.96,35.54,48.53,60.90] mm  (col0=nums 21-25 ; col4=nums 01-05)
+   GRID_Y A/B/C = coords absolutas do topo de cada célula
+   Marcador: rect preto 3.83x2.57mm em left:0.45mm top:0.45mm dentro da célula
+   Marcas de corte: 4mm nos 4 cantos, gap 1mm
+*/
+.volante{
+  position:relative;
+  width:82.55mm;
+  height:186.97mm;
+  background:#fff;
+  font-family:Arial,Helvetica,sans-serif;
+  color:#000;
+  display:inline-block;
+  vertical-align:top;
+  overflow:visible;
+  border:0.5px solid #ccc;
+  box-sizing:content-box;
+}
+
+/* Marcas de corte — pseudo-elementos absolutos fora da borda do volante */
+/* ::before = traços horizontais nos 4 cantos */
+.volante::before{
+  content:'';
+  position:absolute;
+  background:#000;
+  /* canto superior-esquerdo horizontal */
+  top:0; left:-5mm;
+  width:4mm; height:0.3mm;
+  box-shadow:
+    calc(82.55mm + 1mm) 0 0 0 #000,
+    0 186.97mm 0 0 #000,
+    calc(82.55mm + 1mm) 186.97mm 0 0 #000;
+}
+/* ::after = traços verticais nos 4 cantos */
+.volante::after{
+  content:'';
+  position:absolute;
+  background:#000;
+  /* canto superior-esquerdo vertical */
+  top:-5mm; left:0;
+  width:0.3mm; height:4mm;
+  box-shadow:
+    82.55mm 0 0 0 #000,
+    0 calc(186.97mm + 1mm) 0 0 #000,
+    82.55mm calc(186.97mm + 1mm) 0 0 #000;
+}
+
+/* Cabeçalho roxo */
+.vol-header{
+  position:absolute;
+  top:0;left:0;right:0;
+  height:35mm;
+  background:linear-gradient(160deg,#6b1d6d 0%,#9a2b99 40%,#c03a8e 70%,#9a2070 100%);
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:5px 8px 4px;
+}
 .vol-header-confetes{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .vol-confete{position:absolute;border-radius:1px;opacity:.7}
 .vol-trevo-svg{width:28px;height:28px;flex-shrink:0;position:relative;z-index:1}
-.vol-titulo{font-size:22px;font-weight:900;color:#fff;font-style:italic;letter-spacing:-1px;text-shadow:0 2px 6px rgba(0,0,0,.35);line-height:1;position:relative;z-index:1}
-.omr-cel{position:absolute;width:4.73mm;height:3.47mm;box-sizing:border-box;border:0.3px solid #b090b0;background:#fff;font-size:4.5px;font-weight:700;color:#555;display:flex;align-items:center;justify-content:center}
-.omr-cel.marcado::after{content:'';position:absolute;left:0.45mm;top:0.45mm;width:3.83mm;height:2.57mm;background:#000}
-.omr-mark-left{position:absolute;left:0;width:6mm;height:1.5px;background:#000}
-.omr-mark-top{position:absolute;top:42.48mm;height:1.5px;background:#000}
-.omr-sq-red{position:absolute;background:red;left:11.27mm;top:174.87mm;width:3.21mm;height:3.13mm}
-.omr-cr-red{position:absolute;background:red;left:61.11mm;top:174.83mm;width:3.30mm;height:2.45mm;border-radius:50%}
-.vol-instrucao{position:absolute;left:0;right:0;background:#f5f5f5;border-bottom:1px solid #ddd;padding:2px 6px;font-size:5.5px;font-weight:700;color:#555;text-align:center;text-transform:uppercase;letter-spacing:0.2px}
-.vol-q-badge{position:absolute;width:12px;height:12px;border-radius:50%;background:#9a2b99;color:#fff;font-size:6.5px;font-weight:700;display:flex;align-items:center;justify-content:center}
-.vol-promo{position:absolute;left:0;right:0;background:#fffbee;border-top:1.5px solid #a050a0;border-bottom:1px solid #d0c0a0;padding:4px 6px;text-align:center}
-.vol-promo-text{font-size:7.5px;font-weight:700;color:#333;line-height:1.5}
-.vol-promo-pink{color:#c03a8e;font-size:8.5px}
-.vol-footer{position:absolute;left:0;right:0;background:#fff;border-top:1px solid #ddd;padding:3px 5px;font-size:4.5px;color:#555;font-weight:600;text-align:center}
-.vol-footer-brand{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:2px}
-.vol-footer-trevo{font-size:11px}
-.vol-footer-loterias{font-size:5px;color:#888;font-weight:600}
-.vol-footer-caixa{font-size:8px;font-weight:900;color:#005c9e;letter-spacing:-.3px}
+.vol-titulo{font-size:20px;font-weight:900;color:#fff;font-style:italic;letter-spacing:-1px;
+  text-shadow:0 2px 6px rgba(0,0,0,.35);line-height:1;position:relative;z-index:1}
+
+/* Instrução */
+.vol-instrucao{
+  position:absolute;
+  left:0;right:0;
+  top:35mm;
+  background:#f0eaf0;
+  border-bottom:0.5px solid #c0a0c0;
+  padding:1.5px 4px;
+  font-size:5px;
+  font-weight:700;
+  color:#555;
+  text-align:center;
+  text-transform:uppercase;
+  letter-spacing:0.2px;
+  line-height:1.4;
+}
+
+/* Rótulo de quadro (A/B/C) */
+.vol-q-label{
+  position:absolute;
+  font-size:5px;
+  font-weight:700;
+  color:#9a2b99;
+  text-transform:uppercase;
+}
+
+/* Célula OMR */
+.omr-cel{
+  position:absolute;
+  width:4.73mm;
+  height:3.47mm;
+  box-sizing:border-box;
+  border:0.4px solid #c8a0c8;
+  background:#fff;
+  overflow:hidden;
+}
+/* Número dentro da célula — visível sempre */
+.omr-num{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:4px;
+  font-weight:700;
+  color:#666;
+  z-index:1;
+  pointer-events:none;
+}
+/* Retângulo de marcação OMR: 3.83x2.57mm em left:0.45mm top:0.45mm */
+.omr-cel.marcado .omr-fill{
+  position:absolute;
+  left:0.45mm;
+  top:0.45mm;
+  width:3.83mm;
+  height:2.57mm;
+  background:#000;
+  z-index:2;
+}
+/* Quando marcado, ocultar número (fica coberto pelo rect) */
+.omr-cel.marcado .omr-num{
+  display:none;
+}
+
+/* Marcas OMR laterais esq */
+.omr-mark-left{
+  position:absolute;
+  left:0;
+  width:5.5mm;
+  height:0.4mm;
+  background:#000;
+}
+
+/* Marcas OMR no topo */
+.omr-mark-top{
+  position:absolute;
+  top:42.48mm;
+  height:0.4mm;
+  background:#000;
+}
+
+/* Quadrado vermelho inf-esq */
+.omr-sq-red{
+  position:absolute;
+  background:red;
+  left:11.27mm;
+  top:174.87mm;
+  width:3.21mm;
+  height:3.13mm;
+}
+
+/* Elipse vermelha inf-dir */
+.omr-cr-red{
+  position:absolute;
+  background:red;
+  left:61.11mm;
+  top:174.83mm;
+  width:3.30mm;
+  height:2.45mm;
+  border-radius:50%;
+}
+
+/* Faixa promocional */
+.vol-promo{
+  position:absolute;
+  left:0;right:0;
+  background:#fffbee;
+  border-top:1px solid #a050a0;
+  border-bottom:0.5px solid #d0c0a0;
+  padding:3px 5px;
+  text-align:center;
+}
+.vol-promo-text{font-size:6.5px;font-weight:700;color:#333;line-height:1.5}
+.vol-promo-pink{color:#c03a8e}
+
+/* Footer */
+.vol-footer{
+  position:absolute;
+  left:0;right:0;
+  bottom:0;
+  background:#fff;
+  border-top:0.5px solid #ddd;
+  padding:2px 4px;
+  font-size:4px;
+  color:#555;
+  font-weight:600;
+  text-align:center;
+}
+.vol-footer-brand{display:flex;align-items:center;justify-content:center;gap:3px;margin-top:1px}
+.vol-footer-loterias{font-size:4.5px;color:#888;font-weight:600}
+.vol-footer-caixa{font-size:7px;font-weight:900;color:#005c9e;letter-spacing:-.3px}
 .vol-footer-caixa-span{color:#f7941d}
+
+/* Linha corte */
 .vol-corte{border:none;border-top:1.5px dashed #aaa;margin:8px 0;width:100%}
-.folha-a4{width:210mm;min-height:297mm;background:white;margin:0 auto;padding:8mm;box-shadow:0 2px 16px rgba(0,0,0,.4);display:flex;flex-wrap:wrap;gap:6mm;align-content:flex-start;justify-content:center}
-@media print{body,html{background:white!important;color:black!important}.no-print{display:none!important}.volante{box-shadow:none!important}.print-area{margin:0;padding:0}@page{margin:0;size:auto}.volante-unico{position:fixed;top:var(--margin-y);left:var(--margin-x);margin:0!important}.folha-a4{box-shadow:none!important;padding:8mm!important;width:210mm!important}}
+
+/* Folha A4 */
+.folha-a4{width:210mm;min-height:297mm;background:white;margin:0 auto;padding:8mm;
+  box-shadow:0 2px 16px rgba(0,0,0,.4);display:flex;flex-wrap:wrap;gap:6mm;
+  align-content:flex-start;justify-content:center}
+
+@media print{
+  body,html{background:white!important;color:black!important}
+  .no-print{display:none!important}
+  .volante{box-shadow:none!important;border-color:transparent!important}
+  @page{margin:0;size:82.55mm 186.97mm}
+  .folha-a4{box-shadow:none!important;padding:8mm!important;width:210mm!important}
+}
 </style>
 </head>
 <body>
@@ -83,10 +272,8 @@ textarea{background:#0d1117;border:1px solid #30363d;color:#e6edf3;border-radius
 <label>Adicionar jogo manualmente (15 números separados por vírgula ou espaço):</label>
 <input type="text" id="inp-jogo" placeholder="Ex: 01,02,05,07,09,11,13,14,17,18,20,21,23,24,25">
 </div>
-<div>
-<label>&nbsp;</label>
-<button class="btn" onclick="adicionarJogo()">+ Adicionar</button>
-</div>
+<div><label>&nbsp;</label>
+<button class="btn" onclick="adicionarJogo()">+ Adicionar</button></div>
 </div>
 <div class="row">
 <div class="field-wide">
@@ -118,14 +305,10 @@ textarea{background:#0d1117;border:1px solid #30363d;color:#e6edf3;border-radius
 </div>
 </div>
 <div class="row">
-<div class="field">
-<label>Margem X (mm):</label>
-<input type="number" id="margin-x" value="0" step="0.5" min="-20" max="20" oninput="atualizarPreview()">
-</div>
-<div class="field">
-<label>Margem Y (mm):</label>
-<input type="number" id="margin-y" value="0" step="0.5" min="-20" max="20" oninput="atualizarPreview()">
-</div>
+<div class="field"><label>Margem X (mm):</label>
+<input type="number" id="margin-x" value="0" step="0.5" min="-20" max="20" oninput="atualizarPreview()"></div>
+<div class="field"><label>Margem Y (mm):</label>
+<input type="number" id="margin-y" value="0" step="0.5" min="-20" max="20" oninput="atualizarPreview()"></div>
 </div>
 <div class="btns">
 <button class="btn" onclick="imprimir()">🖨️ Imprimir</button>
@@ -139,7 +322,8 @@ textarea{background:#0d1117;border:1px solid #30363d;color:#e6edf3;border-radius
 </div>
 <script>
 let jogos = [];
-const COL_X = [10.47, 22.96, 35.54, 48.53, 60.90];
+/* === Constantes OMR oficiais === */
+const COL_X  = [10.47, 22.96, 35.54, 48.53, 60.90];
 const GRID_Y = {
   A: [46.63, 51.11, 55.68, 60.08, 64.61],
   B: [71.97, 76.33, 80.94, 85.51, 89.87],
@@ -147,51 +331,208 @@ const GRID_Y = {
 };
 const LEFT_MARKS_Y = [42.52,47.56,52.04,56.57,61.10,65.54,72.82,77.34,81.83,86.36,90.84,98.24,102.77,107.26,111.83,116.31,123.76,131.59,139.71];
 const TOP_MARKS = [{x:16.97,w:3.97},{x:23.17,w:3.97},{x:54.70,w:4.01}];
-function confetesHTML(){const cores=['#f7c948','#fff','#ff6fcf','#a0f0a0','#6fd4ff','#ff9f6f'];let h='<div class="vol-header-confetes">';for(let i=0;i<18;i++){const c=cores[i%cores.length];const l=(i*5.5+Math.sin(i)*8)%95;const t=(i*7+Math.cos(i)*10)%85;const w=3+i%3;const ht=4+i%4;const r=(i*25)%180;h+='<div class="vol-confete" style="left:'+l+'%;top:'+t+'%;width:'+w+'px;height:'+ht+'px;background:'+c+';transform:rotate('+r+'deg)"></div>';}h+='</div>';return h;}
-const TREVO_SVG='<svg class="vol-trevo-svg" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="13" r="9" fill="#fff" opacity=".9"/><circle cx="13" cy="24" r="9" fill="#fff" opacity=".9"/><circle cx="27" cy="24" r="9" fill="#fff" opacity=".9"/><rect x="18" y="26" width="4" height="10" rx="2" fill="#fff" opacity=".9"/></svg>';
-function parsearJogo(str){const nums=str.match(/d+/g);if(!nums)return null;const p=[...new Set(nums.map(n=>parseInt(n)).filter(n=>n>=1&&n<=25))].sort((a,b)=>a-b);if(p.length<15||p.length>20)return null;return p;}
-function pad(n){return String(n).padStart(2,'0');}
-function mostrarStatus(msg,tipo='info'){const el=document.getElementById('status-importacao');el.innerHTML='<div class="status '+tipo+'">'+msg+'</div>';setTimeout(()=>{el.innerHTML='';},4000);}
-function adicionarJogo(){const v=document.getElementById('inp-jogo').value.trim();if(!v)return;const j=parsearJogo(v);if(!j){mostrarStatus('Jogo inválido. Insira de 15 a 20 números entre 01 e 25.','err');return;}jogos.push(j);document.getElementById('inp-jogo').value='';mostrarStatus('Jogo adicionado! Total: '+jogos.length,'ok');renderLista();atualizarPreview();}
-function importarLote(){const txt=document.getElementById('inp-lote').value.trim();const linhas=txt.split('
-').filter(l=>l.trim());let ok=0,err=0;linhas.forEach(l=>{const j=parsearJogo(l);if(j){jogos.push(j);ok++;}else err++;});document.getElementById('inp-lote').value='';mostrarStatus(ok+' jogos importados'+(err?' | '+err+' inválidos':''),'ok');renderLista();atualizarPreview();}
-function importarDoLocalStorage(){const chaves=['lotofacil_jogos','jogos_gerados','sugestoes','apostas','lotostat_jogos'];let encontrou=false;chaves.forEach(ch=>{try{const raw=localStorage.getItem(ch);if(raw){const data=JSON.parse(raw);let arr=Array.isArray(data)?data:(data.jogos||data.apostas||data.sugestoes||[]);arr.forEach(item=>{const nums=Array.isArray(item)?item:(item.numeros||item.dezenas||item.numbers||[]);const j=parsearJogo(nums.join(','));if(j){jogos.push(j);encontrou=true;}});}}catch(e){}});if(encontrou){mostrarStatus('Jogos importados do LOTOSTAT PRO! Total: '+jogos.length,'ok');renderLista();atualizarPreview();}else mostrarStatus('Nenhum jogo encontrado no LOTOSTAT PRO. Gere jogos na aba Sugestão primeiro.','err');}
+/* Mapeamento: N -> {col, row}  col=4-floor((N-1)/5)  row=(N-1)%5 */
+function numToPos(n){ return {col:4-Math.floor((n-1)/5), row:(n-1)%5}; }
+function confetesHTML(){
+  var cores=["#f7c948","#fff","#ff6fcf","#a0f0a0","#6fd4ff","#ff9f6f"];
+  var h='<div class="vol-header-confetes">';
+  for(var i=0;i<18;i++){
+    var c=cores[i%cores.length];
+    var l=(i*5.5+Math.sin(i)*8)%95;
+    var t=(i*7+Math.cos(i)*10)%85;
+    var w=3+i%3; var ht=4+i%4; var r=(i*25)%180;
+    h+='<div class="vol-confete" style="left:'+l+'%;top:'+t+'%;width:'+w+'px;height:'+ht+'px;background:'+c+';transform:rotate('+r+'deg)"></div>';
+  }
+  h+='</div>'; return h;
+}
+var TREVO_SVG='<svg class="vol-trevo-svg" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="13" r="9" fill="#fff" opacity=".9"/><circle cx="13" cy="24" r="9" fill="#fff" opacity=".9"/><circle cx="27" cy="24" r="9" fill="#fff" opacity=".9"/><rect x="18" y="26" width="4" height="10" rx="2" fill="#fff" opacity=".9"/></svg>';
+function parsearJogo(str){
+  var re = new RegExp("\\d+","g");
+  var nums = String(str).match(re);
+  if(!nums) return null;
+  var p=[...new Set(nums.map(function(n){return parseInt(n,10);}).filter(function(n){return n>=1&&n<=25;}))].sort(function(a,b){return a-b;});
+  if(p.length<15||p.length>20) return null;
+  return p;
+}
+function pad(n){return String(n).padStart(2,"0");}
+function mostrarStatus(msg,tipo){
+  tipo=tipo||"info";
+  var el=document.getElementById("status-importacao");
+  el.innerHTML='<div class="status '+tipo+'">'+msg+'</div>';
+  setTimeout(function(){el.innerHTML="";},4000);
+}
+function adicionarJogo(){
+  var v=document.getElementById("inp-jogo").value.trim();
+  if(!v)return;
+  var j=parsearJogo(v);
+  if(!j){mostrarStatus("Jogo inválido. Insira de 15 a 20 números entre 01 e 25.","err");return;}
+  jogos.push(j);
+  document.getElementById("inp-jogo").value="";
+  mostrarStatus("Jogo adicionado! Total: "+jogos.length,"ok");
+  renderLista(); atualizarPreview();
+}
+function importarLote(){
+  var txt=document.getElementById("inp-lote").value.trim();
+  var linhas=txt.split(String.fromCharCode(10)).filter(function(l){return l.trim();});
+  var ok=0,err=0;
+  linhas.forEach(function(l){var j=parsearJogo(l);if(j){jogos.push(j);ok++;}else err++;});
+  document.getElementById("inp-lote").value="";
+  mostrarStatus(ok+" jogos importados"+(err?" | "+err+" inválidos":""),"ok");
+  renderLista(); atualizarPreview();
+}
+function importarDoLocalStorage(){
+  var chaves=["lotofacil_jogos","jogos_gerados","sugestoes","apostas","lotostat_jogos"];
+  var encontrou=false;
+  chaves.forEach(function(ch){
+    try{
+      var raw=localStorage.getItem(ch);
+      if(raw){
+        var data=JSON.parse(raw);
+        var arr=Array.isArray(data)?data:(data.jogos||data.apostas||data.sugestoes||[]);
+        arr.forEach(function(item){
+          var nums=Array.isArray(item)?item:(item.numeros||item.dezenas||item.numbers||[]);
+          var j=parsearJogo(nums.join(","));
+          if(j){jogos.push(j);encontrou=true;}
+        });
+      }
+    }catch(e){}
+  });
+  if(encontrou){mostrarStatus("Jogos importados do LOTOSTAT PRO! Total: "+jogos.length,"ok");renderLista();atualizarPreview();}
+  else mostrarStatus("Nenhum jogo encontrado no LOTOSTAT PRO.","err");
+}
 function removerJogo(i){jogos.splice(i,1);renderLista();atualizarPreview();}
-function limparTodos(){if(!confirm('Remover todos os jogos?'))return;jogos=[];renderLista();atualizarPreview();}
-function renderLista(){const sel=document.getElementById('jogo-atual');const prev=sel.value;sel.innerHTML=jogos.map((j,i)=>'<option value="'+i+'">Jogo '+(i+1)+' ('+j.length+' dezenas)</option>').join('');if(prev&&parseInt(prev)<jogos.length)sel.value=prev;const lista=document.getElementById('jogos-lista');lista.innerHTML=jogos.map((j,i)=>'<div class="jogo-chip selecionado" onclick="selecionarJogo('+i+')"><span class="remover" onclick="event.stopPropagation();removerJogo('+i+')" title="Remover">x</span><div style="font-size:.7rem;color:#8b949e;margin-bottom:2px">Jogo '+(i+1)+'</div><div class="nums">'+j.map(n=>pad(n)).join(' ')+'</div></div>').join('');}
-function selecionarJogo(i){document.getElementById('jogo-atual').value=i;atualizarPreview();}
-function renderVolante(nums,jogoNum){
-  const marcados=new Set(nums);
-  let html='<div class="volante">';
-  html+='<div class="vol-header">'+confetesHTML()+TREVO_SVG+'<div class="vol-titulo">lotofácil</div></div>';
-  html+='<div class="vol-instrucao" style="top:38mm">Você pode jogar marcando em 1, 2 ou 3 dos quadros abaixo:</div>';
-  const quadros=['A','B','C'];
-  quadros.forEach((q,qi)=>{
-    const badgeTop=(GRID_Y[q][0]-4).toFixed(2);
-    const badgeLeft=(COL_X[0]-2).toFixed(2);
-    html+='<div class="vol-q-badge" style="left:'+badgeLeft+'mm;top:'+badgeTop+'mm;">'+(qi+1)+'</div>';
-    for(let row=0;row<5;row++){
-      for(let col=0;col<5;col++){
-        const num=(4-col)*5+(row+1);
-        const isMarcado=(qi===0)&&marcados.has(num);
-        const x=COL_X[col].toFixed(2);
-        const y=GRID_Y[q][row].toFixed(2);
-        html+='<div class="omr-cel'+(isMarcado?' marcado':'')+'" style="left:'+x+'mm;top:'+y+'mm" title="'+pad(num)+'">'+pad(num)+'</div>';
+function limparTodos(){
+  if(!confirm("Remover todos os jogos?"))return;
+  jogos=[];renderLista();atualizarPreview();
+}
+function renderLista(){
+  var sel=document.getElementById("jogo-atual");
+  var prev=sel.value;
+  sel.innerHTML=jogos.map(function(j,i){return'<option value="'+i+'">Jogo '+( i+1)+' ('+j.length+' dezenas)</option>';}).join("");
+  if(prev&&parseInt(prev)<jogos.length)sel.value=prev;
+  var lista=document.getElementById("jogos-lista");
+  lista.innerHTML=jogos.map(function(j,i){
+    return '<div class="jogo-chip selecionado" onclick="selecionarJogo('+i+')">'
+      +'<span class="remover" onclick="event.stopPropagation();removerJogo('+i+')" title="Remover">x</span>'
+      +'<div style="font-size:.7rem;color:#8b949e;margin-bottom:2px">Jogo '+( i+1)+'</div>'
+      +'<div class="nums">'+j.map(pad).join(" ")+'</div>'
+      +'</div>';
+  }).join("");
+}
+function selecionarJogo(i){document.getElementById("jogo-atual").value=i;atualizarPreview();}
+/* ===== RENDER VOLANTE OMR ===== */
+function renderVolante(nums, jogoNum){
+  var marcados = new Set(nums);
+  var h = '<div class="volante">';
+
+  /* Cabeçalho roxo */
+  h += '<div class="vol-header">' + confetesHTML() + TREVO_SVG + '<div class="vol-titulo">lotofácil</div></div>';
+
+  /* Instrução */
+  h += '<div class="vol-instrucao">Você pode jogar marcando em 1, 2 ou 3 dos quadros abaixo:</div>';
+
+  /* Quadros A, B, C */
+  var qNames = ["A","B","C"];
+  qNames.forEach(function(q, qi){
+    /* Rótulo do quadro */
+    var labelTop = (GRID_Y[q][0] - 3.5).toFixed(2);
+    var labelLeft = (COL_X[4] + 5.5).toFixed(2);
+    h += '<div class="vol-q-label" style="left:'+labelLeft+'mm;top:'+labelTop+'mm;">QUADRO ' + (qi+1) + '</div>';
+
+    /* 5 colunas x 5 linhas */
+    for(var row=0; row<5; row++){
+      for(var col=0; col<5; col++){
+        /* col0(esq)=21-25 ... col4(dir)=01-05 */
+        var num = (4-col)*5 + (row+1);
+        var isMarcado = (qi === 0) && marcados.has(num);
+        var x = COL_X[col].toFixed(2);
+        var y = GRID_Y[q][row].toFixed(2);
+        h += '<div class="omr-cel' + (isMarcado ? ' marcado' : '') + '" style="left:'+x+'mm;top:'+y+'mm">'
+          + (isMarcado ? '<div class="omr-fill"></div>' : '')
+          + '<span class="omr-num">' + pad(num) + '</span>'
+          + '</div>';
       }
     }
   });
-  LEFT_MARKS_Y.forEach(y=>{html+='<div class="omr-mark-left" style="top:'+y.toFixed(2)+'mm"></div>';});
-  TOP_MARKS.forEach(m=>{html+='<div class="omr-mark-top" style="left:'+m.x.toFixed(2)+'mm;width:'+m.w.toFixed(2)+'mm"></div>';});
-  html+='<div class="omr-sq-red"></div>';
-  html+='<div class="omr-cr-red"></div>';
-  html+='<div class="vol-promo" style="top:120mm"><div class="vol-promo-text">Aposte em <span class="vol-promo-pink">15, 16, 17</span> ou <span class="vol-promo-pink">18 números</span><br>e ganhe com <span class="vol-promo-pink">11, 12, 13, 14</span> e <span class="vol-promo-pink">15</span> acertos.</div></div>';
-  html+='<div class="vol-footer" style="bottom:0"><div>CONFIRA O BILHETE IMPRESSO PELO TERMINAL. ELE É O ÚNICO COMPROVANTE DA APOSTA.</div><div class="vol-footer-brand"><span class="vol-footer-trevo">🍀</span><span><span class="vol-footer-loterias">loterias</span><span class="vol-footer-caixa"> CAIXA<span class="vol-footer-caixa-span">●</span></span></span></div></div>';
-  html+='</div>';
-  return html;
+
+  /* Marcas OMR laterais esq */
+  LEFT_MARKS_Y.forEach(function(y){
+    h += '<div class="omr-mark-left" style="top:' + y.toFixed(2) + 'mm"></div>';
+  });
+
+  /* Marcas OMR no topo */
+  TOP_MARKS.forEach(function(m){
+    h += '<div class="omr-mark-top" style="left:' + m.x.toFixed(2) + 'mm;width:' + m.w.toFixed(2) + 'mm"></div>';
+  });
+
+  /* Quadrado vermelho inf-esq */
+  h += '<div class="omr-sq-red"></div>';
+
+  /* Elipse vermelha inf-dir */
+  h += '<div class="omr-cr-red"></div>';
+
+  /* Faixa promocional (entre grade C e rodapé) */
+  h += '<div class="vol-promo" style="top:120mm">'
+    + '<div class="vol-promo-text">Aposte em <span class="vol-promo-pink">15, 16, 17</span>'
+    + ' ou <span class="vol-promo-pink">18 números</span><br>'
+    + 'e ganhe com <span class="vol-promo-pink">11, 12, 13, 14</span>'
+    + ' e <span class="vol-promo-pink">15</span> acertos.</div></div>';
+
+  /* Footer */
+  h += '<div class="vol-footer">'
+    + '<div>CONFIRA O BILHETE IMPRESSO PELO TERMINAL. ELE É O ÚNICO COMPROVANTE DA APOSTA.</div>'
+    + '<div class="vol-footer-brand">'
+    + '<span style="font-size:9px">🍀</span>'
+    + '<span><span class="vol-footer-loterias">loterias</span>'
+    + '<span class="vol-footer-caixa"> CAIXA<span class="vol-footer-caixa-span">●</span></span></span>'
+    + '</div></div>';
+
+  h += '</div>';
+  return h;
 }
-function atualizarPreview(){const container=document.getElementById('preview-container');if(jogos.length===0){container.innerHTML='<div style="color:#8b949e;font-size:.85rem;padding:20px">Nenhum jogo adicionado ainda.</div>';return;}const modo=document.getElementById('modo-impressao').value;const jogoIdx=parseInt(document.getElementById('jogo-atual').value)||0;const mx=parseFloat(document.getElementById('margin-x').value)||0;const my=parseFloat(document.getElementById('margin-y').value)||0;if(modo==='unico'){const j=jogos[jogoIdx]||jogos[0];if(!j){container.innerHTML='<div style="color:#f85149">Selecione um jogo.</div>';return;}container.innerHTML='<div style="margin:'+my+'mm 0 0 '+mx+'mm">'+renderVolante(j,jogoIdx+1)+'</div>';}else{let html='<div class="folha-a4">';jogos.forEach((j,i)=>{if(i>0)html+='<hr class="vol-corte">';html+=renderVolante(j,i+1);});html+='</div>';container.innerHTML=html;}}
-function imprimir(){if(jogos.length===0){alert('Adicione pelo menos um jogo antes de imprimir.');return;}const mx=parseFloat(document.getElementById('margin-x').value)||0;const my=parseFloat(document.getElementById('margin-y').value)||0;document.documentElement.style.setProperty('--margin-x',mx+'mm');document.documentElement.style.setProperty('--margin-y',my+'mm');window.print();}
-(function(){try{const params=new URLSearchParams(window.location.search);const raw=params.get('jogos');if(raw){JSON.parse(decodeURIComponent(raw)).forEach(j=>{const parsed=parsearJogo(j.join?j.join(','):j);if(parsed)jogos.push(parsed);});if(jogos.length)mostrarStatus(jogos.length+' jogos carregados via URL.','ok');}}catch(e){}renderLista();atualizarPreview();})();
+function atualizarPreview(){
+  var container=document.getElementById("preview-container");
+  if(jogos.length===0){container.innerHTML='<div style="color:#8b949e;font-size:.85rem;padding:20px">Nenhum jogo adicionado ainda.</div>';return;}
+  var modo=document.getElementById("modo-impressao").value;
+  var jogoIdx=parseInt(document.getElementById("jogo-atual").value)||0;
+  var mx=parseFloat(document.getElementById("margin-x").value)||0;
+  var my=parseFloat(document.getElementById("margin-y").value)||0;
+  if(modo==="unico"){
+    var j=jogos[jogoIdx]||jogos[0];
+    if(!j){container.innerHTML='<div style="color:#f85149">Selecione um jogo.</div>';return;}
+    container.innerHTML='<div style="margin:'+my+'mm 0 0 '+mx+'mm">'+renderVolante(j,jogoIdx+1)+'</div>';
+  } else {
+    var html='<div class="folha-a4">';
+    jogos.forEach(function(j,i){if(i>0)html+='<hr class="vol-corte">';html+=renderVolante(j,i+1);});
+    html+='</div>';
+    container.innerHTML=html;
+  }
+}
+
+function imprimir(){
+  if(jogos.length===0){alert("Adicione pelo menos um jogo antes de imprimir.");return;}
+  var mx=parseFloat(document.getElementById("margin-x").value)||0;
+  var my=parseFloat(document.getElementById("margin-y").value)||0;
+  document.documentElement.style.setProperty("--margin-x",mx+"mm");
+  document.documentElement.style.setProperty("--margin-y",my+"mm");
+  window.print();
+}
+
+(function(){
+  try{
+    var params=new URLSearchParams(window.location.search);
+    var raw=params.get("jogos");
+    if(raw){
+      JSON.parse(decodeURIComponent(raw)).forEach(function(j){
+        var parsed=parsearJogo(j.join?j.join(","):j);
+        if(parsed)jogos.push(parsed);
+      });
+      if(jogos.length)mostrarStatus(jogos.length+" jogos carregados via URL.","ok");
+    }
+  }catch(e){}
+  renderLista();
+  atualizarPreview();
+})();
 </script>
 </body>
 </html>
