@@ -3754,7 +3754,7 @@ var col2=(B.grid.cols-1)-Math.floor((d-1)/B.grid.rows);
 var row2=(d-1)%B.grid.rows;
 var q3=B.quadros[qi_m]; var cx3=bX+m2p((B.grid.xStart+col2*B.grid.xStep)*scl); var cy3=bY+m2p((q3.topY+B.grid.yStart+row2*B.grid.yStep)*scl); ctx.fillRect(cx3-rW/2,cy3-rH/2,rW,rH);}}
 if(jogo){ctx.fillStyle='#444';ctx.textAlign='center';ctx.textBaseline='top';
-ctx.font=m2p(2.2*scl)+'px Arial';ctx.fillText(jogo.label||'Jogo '+(ji+1),bX+bW/2,bY+bH+m2p(1.5));}}
+ctx.font=m2p(2.2*scl)+'px Arial';ctx.fillText(jogo.label||'Jogos '+(bi*3+1)+'-'+(Math.min(bi*3+3,jogos.length)),bX+bW/2,bY+bH+m2p(1.5));}}
 window.pifUpdateInfo();window.pifUpdateJogoLabel();
 };
 window.pifUpdateInfo=function(){var el=document.getElementById('pif-info');if(!el)return;var n=PIF.layout.n,tot=PIF.state.jogos.length,folhas=Math.ceil(tot/n);el.innerHTML='<b style="color:#a78bfa">'+tot+' jogo(s)</b> disponíveis<br><b style="color:#a78bfa">'+n+' bilhete(s)</b> por folha A4<br><b style="color:#a78bfa">'+folhas+' folha(s)</b> necessárias<br><b style="color:#a78bfa">A4 Paisagem</b> · 297×210mm<br><span style="color:#6b7280">Bilhetes lado a lado</span>';};
